@@ -192,7 +192,9 @@ namespace Unvi.DataStructures.Sets
 
 		public void Clear()
 		{
-			throw new NotImplementedException();
+			Clear(_root);
+			_root = null;
+			Count = 0;
 		}
 		#endregion
 
@@ -245,12 +247,37 @@ namespace Unvi.DataStructures.Sets
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			throw new NotImplementedException();
+			AVLTreeSet<T> painted = new AVLTreeSet<T>();
+
+			var current = _root;
+
+			while (current != null)
+			{
+				if (current.Left != null && !painted.Contains(current.Left.Data))
+				{
+					current = current.Left;
+				}
+				else if (!painted.Contains(current.Data))
+				{
+					painted.Add(current.Data);
+					yield return current.Data;
+				}
+				else if (current.Right != null && !painted.Contains(current.Right.Data))
+				{
+					current = current.Right;
+				}
+				else
+				{
+					current = current.Parent;
+				}
+			}
+
+			painted.Clear();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			throw new NotImplementedException();
+			return this.GetEnumerator();
 		}
 		#endregion
 
@@ -394,6 +421,22 @@ namespace Unvi.DataStructures.Sets
 			// Return the node that has the tree location of
 			// the node that was rotated out of the given position.
 			return newCurrent;
+		}
+
+		/// <summary>
+		/// Recursive method for clearning the a tree using pre-order DFS.
+		/// </summary>
+		private void Clear(Node n)
+		{
+			if (n == null)
+				return;
+
+			Clear(n.Left);
+			Clear(n.Right);
+
+			n.Left = null;
+			n.Right = null;
+			n.Parent = null;
 		}
 		#endregion
 
