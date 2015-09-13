@@ -202,12 +202,26 @@ namespace Unvi.DataStructures.Sets
 		#region Set Meta Data
 		public bool IsSubsetOf(ISet<T> otherSet)
 		{
-			throw new NotImplementedException();
+			if (otherSet == null)
+				return false;
+
+			if (this == otherSet)
+				return true;
+			if (this.Count > otherSet.Count)
+				return false;
+
+			foreach (var value in this)
+				if (!otherSet.Contains(value))
+					return false;
+
+			return true;
 		}
 
 		public bool IsSupersetOf(ISet<T> otherSet)
 		{
-			throw new NotImplementedException();
+			if (otherSet == null)
+				return true;
+			return otherSet.IsSubsetOf(this);
 		}
 
 		public bool IsProperSubsetOf(ISet<T> otherSet)
