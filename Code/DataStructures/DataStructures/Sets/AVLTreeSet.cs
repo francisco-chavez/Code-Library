@@ -114,5 +114,18 @@ namespace Unvi.DataStructures.Sets
 			throw new NotImplementedException();
 		}
 		#endregion
+
+
+		#region Helper Classes
+		private class Node
+		{
+			public Node Parent	{ get; set; }
+			public Node Left	{ get; set; }
+			public Node Right	{ get; set; }
+			public int	Height	{ get; set; }
+
+			public T	Data	{ get; set; }
+		}
+		#endregion
 	}
 }
