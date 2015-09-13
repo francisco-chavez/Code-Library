@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dictionaries\AVLTreeDictionary.cs" />
+    <Compile Include="IDictionary.cs" />
     <Compile Include="ISet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sets\AVLTreeSet.cs" />
