@@ -44,6 +44,16 @@ namespace Unvi.DataStructures.Sets
 			Count = 0;
 		}
 
+		public AVLTreeSet(IEnumerable<T> values)
+			: this()
+		{
+			if (values != null)
+			{
+				foreach(T val in values)
+					this.Add(val);
+			}
+		}
+
 		/// <summary>
 		/// Destructor for AVLTreeSet. This isn't really needed, but it should break
 		/// the tree down a bit faster making it easier on the GC.
@@ -250,7 +260,7 @@ namespace Unvi.DataStructures.Sets
 		#region Set Creation
 		public ISet<T> Intersection(ISet<T> otherSet)
 		{
-			if(otherSet == null || this.Count == 0 || otherSet.Count == 0)
+			if (otherSet == null || this.Count == 0 || otherSet.Count == 0)
 				return new AVLTreeSet<T>();
 
 			ISet<T> big = this;
@@ -265,27 +275,48 @@ namespace Unvi.DataStructures.Sets
 			var result = new AVLTreeSet<T>();
 
 			foreach (T value in small)
-			{
-				if(big.Contains(value))
+				if (big.Contains(value))
 					result.Add(value);
-			}
 
 			return result;
 		}
 
 		public ISet<T> Union(ISet<T> otherSet)
 		{
-			throw new NotImplementedException();
+			var result = new AVLTreeSet<T>(this);
+
+			if (otherSet == null)
+				return result;
+
+			foreach (T val in otherSet)
+				result.Add(val);
+
+			return result;
 		}
 
 		public ISet<T> Complement(ISet<T> otherSet)
 		{
-			throw new NotImplementedException();
+			var result = new AVLTreeSet<T>(this);
+
+			if (otherSet == null)
+				return result;
+
+			foreach (var val in otherSet)
+				result.Remove(val);     // We don't need to worry about value not being there
+										// because the remove method will check that for us.
+
+			return result;
 		}
 
 		public ISet<T> SymmetricDifference(ISet<T> otherSet)
 		{
-			throw new NotImplementedException();
+			if (otherSet == null)
+				return new AVLTreeSet<T>(this);
+
+			var union = this.Union(otherSet);
+			var intersection = this.Intersection(otherSet);
+
+			return union.Complement(intersection);
 		}
 		#endregion
 
