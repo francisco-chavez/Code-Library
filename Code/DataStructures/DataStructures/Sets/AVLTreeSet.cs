@@ -250,7 +250,27 @@ namespace Unvi.DataStructures.Sets
 		#region Set Creation
 		public ISet<T> Instersection(ISet<T> otherSet)
 		{
-			throw new NotImplementedException();
+			if(otherSet == null || this.Count == 0 || otherSet.Count == 0)
+				return new AVLTreeSet<T>();
+
+			ISet<T> big = this;
+			ISet<T> small = otherSet;
+
+			if (small.Count > big.Count)
+			{
+				big = otherSet;
+				small = this;
+			}
+
+			var result = new AVLTreeSet<T>();
+
+			foreach (T value in small)
+			{
+				if(big.Contains(value))
+					result.Add(value);
+			}
+
+			return result;
 		}
 
 		public ISet<T> Union(ISet<T> otherSet)
