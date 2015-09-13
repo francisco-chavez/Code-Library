@@ -28,7 +28,7 @@ namespace Unvi.DataStructures.Sets
 		{
 			get
 			{
-				if(Count == 0)
+				if (Count == 0)
 					return 0;
 				else
 					return _root.Height;
@@ -61,7 +61,7 @@ namespace Unvi.DataStructures.Sets
 		public void Add(T value)
 		{
 			// Null is not a valid value
-			if(value == null)
+			if (value == null)
 				return;
 
 			// The value is already present
@@ -78,7 +78,7 @@ namespace Unvi.DataStructures.Sets
 			var parent = GetParentNode(value);
 			var newNode = new Node(value) { Parent = parent };
 
-			if(newNode.Data.CompareTo(parent.Data) < 0)
+			if (newNode.Data.CompareTo(parent.Data) < 0)
 				parent.Left = newNode;
 			else
 				parent.Right = newNode;
@@ -173,12 +173,12 @@ namespace Unvi.DataStructures.Sets
 		/// </summary>
 		private Node GetParentNode(T value)
 		{
-			if(_root == null)
+			if (_root == null)
 				return null;
 
 			// Root node doesn't have a parent.
 			// If root node contains value return null
-			if(EqualityComparer<T>.Default.Equals(value, _root.Data))
+			if (EqualityComparer<T>.Default.Equals(value, _root.Data))
 				return null;
 
 			Node current = _root;
@@ -194,9 +194,113 @@ namespace Unvi.DataStructures.Sets
 			return parent;
 		}
 
-		private void RebalanceTree(Node newNode)
+		private void RebalanceTree(Node startingPoint)
 		{
-			throw new NotImplementedException();
+			// Move up the tree while rotating nodes to keep things balanced.
+			var current = startingPoint;
+			while (current != null)
+			{
+				current.UpdateHeight();
+				int balance = current.Balance;
+
+				if (balance < -1)
+				// Is right heavy
+				{
+					// Insure we have a right-right case before we rotate the
+					// current node to the left.
+					if (current.Right.Balance > 0)
+						RotateRight(current.Right);
+					current = RotateLeft(current);
+				}
+				else if (balance > 1)
+				// Is left heavy
+				{
+					// Insure we have a left-left case before we rotate the 
+					// current node to the right.
+					if(current.Left.Balance < 0)
+						RotateLeft(current.Left);
+					current = RotateRight(current);
+				}
+				current = current.Parent;
+			}
+		}
+
+		private Node RotateLeft(Node node)
+		{
+			var newCurrent = node.Right;
+
+			// Unable to rotate left because there
+			// is no node to take the place of our
+			// current node
+			if (node.Right == null)
+				return node;
+
+			node.Right = newCurrent.Left;
+			if (node.Right != null)
+				node.Right.Parent = node;
+
+			newCurrent.Parent = node.Parent;
+			if (newCurrent.Parent == null)
+				_root = newCurrent;
+			else if (newCurrent.Data.CompareTo(newCurrent.Parent.Data) < 0)
+				newCurrent.Parent.Left = newCurrent;
+			else
+				newCurrent.Parent.Right = newCurrent;
+
+			node.Parent = newCurrent;
+			newCurrent.Left = node;
+
+			node.UpdateHeight();
+			newCurrent.UpdateHeight();
+
+			//// We only rotate when we run up the tree. While running
+			//// up the tree, the first thing we do is update the height
+			//// of the nodes we visit. So the parent height doesn't need
+			//// to be updated because it will be updated soon.
+			//if (newCurrent != _root)
+			//	newCurrent.Parent.UpdateHeight();
+
+			return newCurrent;
+		}
+
+		private Node RotateRight(Node node)
+		{
+			// This is the node that will be taking the
+			// place of the given node when rotation is
+			// complete
+			var newCurrent = node.Left;
+
+			// Unable to rotate right because there
+			// is no node to take the place of our
+			// current node
+			if (newCurrent == null)
+				return node;
+
+			node.Left = newCurrent.Right;
+			if (node.Left != null)
+				node.Left.Parent = node;
+
+			newCurrent.Parent = node.Parent;
+			if (newCurrent.Parent == null)
+				_root = newCurrent;
+			else if (newCurrent.Data.CompareTo(newCurrent.Parent.Data) < 0)
+				newCurrent.Parent.Left = newCurrent;
+			else
+				newCurrent.Parent.Right = newCurrent;
+
+			node.Parent = newCurrent;
+			newCurrent.Right = node;
+
+			// The order in which we update the heights of
+			// these nodes is critical.
+			node.UpdateHeight();                    // This node had a change in children
+			newCurrent.UpdateHeight();              // This node had a change in children
+													//if (newCurrent != _root)
+													//	newCurrent.Parent.UpdateHeight();	// This node had a change in children
+
+			// Return the node that has the tree location of
+			// the node that was rotated out of the given position.
+			return newCurrent;
 		}
 		#endregion
 
@@ -211,7 +315,7 @@ namespace Unvi.DataStructures.Sets
 
 			public T	Data	{ get; set; }
 
-			public int	Height	{ get; set; }
+			public int	Height	{ get; private set; }
 			public int	Balance
 			{
 				get
@@ -239,6 +343,17 @@ namespace Unvi.DataStructures.Sets
 				this.Height = 1;
 
 				this.Data	= value;
+			}
+			#endregion
+
+
+			#region Public Methods
+			public void UpdateHeight()
+			{
+				int leftHeight = Left != null ? Left.Height : 0;
+				int rightHeight = Right != null ? Right.Height : 0;
+
+				Height = 1 + Math.Max(leftHeight, rightHeight);
 			}
 			#endregion
 		}
