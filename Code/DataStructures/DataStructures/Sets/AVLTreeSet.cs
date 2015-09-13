@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Unvi.DataStructures.Sets
@@ -18,12 +15,18 @@ namespace Unvi.DataStructures.Sets
 
 
 		#region Properties
+		/// <summary>
+		/// Returns the number of items in the set (a.k.a. the set's cardinality).
+		/// </summary>
 		public int Count
 		{
 			get { return _count; }
 			private set { _count = value; }
 		}
 
+		/// <summary>
+		/// Returns the height of the tree.
+		/// </summary>
 		public int Height
 		{
 			get
@@ -102,6 +105,9 @@ namespace Unvi.DataStructures.Sets
 		#region Public Methods
 
 		#region Set Manipulation
+		/// <summary>
+		/// Adds the given value to the set if it isn't already present.
+		/// </summary>
 		public void Add(T value)
 		{
 			// Null is not a valid value
@@ -131,6 +137,9 @@ namespace Unvi.DataStructures.Sets
 			RebalanceTree(newNode);
 		}
 
+		/// <summary>
+		/// Removes the given value from the set if it is present.
+		/// </summary>
 		public void Remove(T value)
 		{
 			if (value == null)
@@ -218,6 +227,9 @@ namespace Unvi.DataStructures.Sets
 			RebalanceTree(rebalancePoint);
 		}
 
+		/// <summary>
+		/// Tells us if the given value is present in the set.
+		/// </summary>
 		public bool Contains(T value)
 		{
 			if (Count == 0)
@@ -234,6 +246,9 @@ namespace Unvi.DataStructures.Sets
 			return EqualityComparer<T>.Default.Equals(value, node.Data);
 		}
 
+		/// <summary>
+		/// Clears out all values from the set.
+		/// </summary>
 		public void Clear()
 		{
 			Clear(_root);
@@ -244,6 +259,9 @@ namespace Unvi.DataStructures.Sets
 
 
 		#region Set Meta Data
+		/// <summary>
+		/// Tells us if the current set is a subset of the other set. { this } &#8838; { other }
+		/// </summary>
 		public bool IsSubsetOf(ISet<T> otherSet)
 		{
 			if (otherSet == null)
@@ -261,6 +279,9 @@ namespace Unvi.DataStructures.Sets
 			return true;
 		}
 
+		/// <summary>
+		/// Tells us if the current set is a superset of the other set. { this } &#8839; { other }
+		/// </summary>
 		public bool IsSupersetOf(ISet<T> otherSet)
 		{
 			if (otherSet == null)
@@ -268,6 +289,12 @@ namespace Unvi.DataStructures.Sets
 			return otherSet.IsSubsetOf(this);
 		}
 
+		/// <summary>
+		/// Tells us if the current set is a proper subset of the other set. { this } &#8834; { other }
+		/// </summary>
+		/// <remarks>
+		/// A proper subset is a subset that is not equal to the other set.
+		/// </remarks>
 		public bool IsProperSubsetOf(ISet<T> otherSet)
 		{
 			if(otherSet == null)
@@ -279,6 +306,12 @@ namespace Unvi.DataStructures.Sets
 			return this.IsSubsetOf(otherSet);
 		}
 
+		/// <summary>
+		/// Tells us if the current set is a proper superset of the other set. { this } &#8835; { other }
+		/// </summary>
+		/// <remarks>
+		/// A proper super set is a superset that is not equal to the other set. 
+		/// </remarks>
 		public bool IsProperSupersetOf(ISet<T> otherSet)
 		{
 			if(otherSet == null)
@@ -292,6 +325,9 @@ namespace Unvi.DataStructures.Sets
 
 
 		#region Set Creation
+		/// <summary>
+		/// Returns a new set containing the intersection of this set and the other set. { this } &#8745; { other }
+		/// </summary>
 		public ISet<T> Intersection(ISet<T> otherSet)
 		{
 			if (otherSet == null || this.Count == 0 || otherSet.Count == 0)
@@ -315,6 +351,9 @@ namespace Unvi.DataStructures.Sets
 			return result;
 		}
 
+		/// <summary>
+		/// Returns a new set containing the union of this set and the other set. { this } &#8746; { other }
+		/// </summary>
 		public ISet<T> Union(ISet<T> otherSet)
 		{
 			var result = new AVLTreeSet<T>(this);
@@ -328,6 +367,10 @@ namespace Unvi.DataStructures.Sets
 			return result;
 		}
 
+		/// <summary>
+		/// Returns a new set containing the complement of the other set in this set. In other words,
+		/// it returns this set minus the other set. { this } &#8722; { other }
+		/// </summary>
 		public ISet<T> Complement(ISet<T> otherSet)
 		{
 			var result = new AVLTreeSet<T>(this);
@@ -342,6 +385,11 @@ namespace Unvi.DataStructures.Sets
 			return result;
 		}
 
+		/// <summary>
+		/// Returns a new set containing the symmetric difference of this set and the other
+		/// set. This is the complement of the intersection of both sets in the union of 
+		/// both sets.  (A &#8746; B) &#8722; (A &#8745; B)
+		/// </summary>
 		public ISet<T> SymmetricDifference(ISet<T> otherSet)
 		{
 			if (otherSet == null)
