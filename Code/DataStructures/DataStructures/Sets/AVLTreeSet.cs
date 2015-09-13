@@ -163,9 +163,35 @@ namespace Unvi.DataStructures.Sets
 
 
 		#region Helper Methods
+		/// <summary>
+		/// Find a reference to the node that should be the parent to the node containing
+		/// the given value. If there is no node containing the current value, return the
+		/// the node that would be the parent if we were to insert a node containing the
+		/// current value. Keep in mind, that the root node has no parent, so if root 
+		/// contains the value or the value should be inserted at root, then this will 
+		/// return null.
+		/// </summary>
 		private Node GetParentNode(T value)
 		{
-			throw new NotImplementedException();
+			if(_root == null)
+				return null;
+
+			// Root node doesn't have a parent.
+			// If root node contains value return null
+			if(EqualityComparer<T>.Default.Equals(value, _root.Data))
+				return null;
+
+			Node current = _root;
+			Node parent = null;
+
+			// while (current != null) and (value != current.data)
+			while (current != null && !EqualityComparer<T>.Default.Equals(value, current.Data))
+			{
+				parent = current;
+				current = (value.CompareTo(parent.Data) < 0) ? parent.Left : parent.Right;
+			}
+
+			return parent;
 		}
 
 		private void RebalanceTree(Node newNode)
