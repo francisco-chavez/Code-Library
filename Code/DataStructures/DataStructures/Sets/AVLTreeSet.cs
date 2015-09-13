@@ -37,6 +37,40 @@ namespace Unvi.DataStructures.Sets
 		#endregion
 
 
+		#region Operators
+		public static ISet<T> operator +(AVLTreeSet<T> a, ISet<T> b)
+		{
+			if (a != null)
+				return a.Union(b);
+			else if (b != null)
+				return b.Union(a);
+			else
+				return null;
+		}
+
+		public static ISet<T> operator +(ISet<T> a, AVLTreeSet<T> b)
+		{
+			return b + a;
+		}
+
+		public static ISet<T> operator -(AVLTreeSet<T> a, ISet<T> b)
+		{
+			if(a == null)
+				return null;
+
+			return a.Complement(b);
+		}
+
+		public static ISet<T> operator -(ISet<T> a, AVLTreeSet<T> b)
+		{
+			if(a == null)
+				return null;
+
+			return a.Complement(b);
+		}
+		#endregion
+
+
 		#region Constructors
 		public AVLTreeSet()
 		{
