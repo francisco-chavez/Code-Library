@@ -11,7 +11,14 @@ namespace Unvi.DataStructures.Dictionaries
 	public class AVLTreeDictionary<TKey, TValue>
 		: IDictionary<TKey, TValue> where TKey : IComparable
 	{
+		#region Attributes
+		private Node _root;
+		#endregion
+
+
 		#region Properties
+		public int Count { get; private set; }
+
 		public TValue this[TKey key]
 		{
 			get
@@ -24,13 +31,19 @@ namespace Unvi.DataStructures.Dictionaries
 				throw new NotImplementedException();
 			}
 		}
+		#endregion
 
-		public int Count
+
+		#region Constructors
+		public AVLTreeDictionary()
 		{
-			get
-			{
-				throw new NotImplementedException();
-			}
+			_root = null;
+			Count = 0;
+		}
+
+		~AVLTreeDictionary()
+		{
+			Clear();
 		}
 		#endregion
 
@@ -65,6 +78,31 @@ namespace Unvi.DataStructures.Dictionaries
 
 
 		#region Helper Classes
+		private void Clear(Node n)
+		{
+			throw new NotImplementedException();
+		}
+
+		private Node GetParent(TKey key)
+		{
+			throw new NotImplementedException();
+		}
+
+		private void ReblanceTree(Node node)
+		{
+			throw new NotImplementedException();
+		}
+
+		private Node RotateLeft(Node node)
+		{
+			throw new NotImplementedException();
+		}
+
+		private Node RotateRight(Node node)
+		{
+			throw new NotImplementedException();
+		}
+
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			throw new NotImplementedException();
