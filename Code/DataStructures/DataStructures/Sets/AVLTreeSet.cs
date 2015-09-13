@@ -176,7 +176,18 @@ namespace Unvi.DataStructures.Sets
 
 		public bool Contains(T value)
 		{
-			throw new NotImplementedException();
+			if (Count == 0)
+				return false;
+
+			var parent = GetParentNode(value);
+
+			if (parent == null)
+				return EqualityComparer<T>.Default.Equals(value, _root.Data);
+
+			var node = value.CompareTo(parent.Data) < 0 ? parent.Left : parent.Right;
+			if (node == null)
+				return false;
+			return EqualityComparer<T>.Default.Equals(value, node.Data);
 		}
 
 		public void Clear()
