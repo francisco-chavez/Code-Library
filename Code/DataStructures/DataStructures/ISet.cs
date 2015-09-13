@@ -56,23 +56,23 @@ namespace Unvi.DataStructures
 		bool IsProperSupersetOf(ISet<T> otherSet);
 
 		/// <summary>
-		/// Returns a new set containing the union of this set and the other set.
+		/// Returns a new set containing the union of this set and the other set. { this } &#8746; { other }
 		/// </summary>
 		ISet<T> Union(ISet<T> otherSet);
 		/// <summary>
-		/// Returns a new set containing the intersection of this set and the other set.
+		/// Returns a new set containing the intersection of this set and the other set. { this } &#8745; { other }
 		/// </summary>
 		ISet<T> Instersection(ISet<T> otherSet);
 		/// <summary>
 		/// Returns a new set containing the complement of the other set in this set. In other words,
-		/// it returns this set minus the other set.
+		/// it returns this set minus the other set. { this } &#8722; { other }
 		/// </summary>
 		ISet<T> Complement(ISet<T> otherSet);
 
 		/// <summary>
 		/// Returns a new set containing the symmetric difference of this set and the other
 		/// set. This is the complement of the intersection of both sets in the union of 
-		/// both sets.  (this set &222a; other set) - (this set &2229; other set)
+		/// both sets.  (A &#8746; B) &#8722; (A &#8745; B)
 		/// </summary>
 		ISet<T> SymmetricDifference(ISet<T> otherSet);
 	}
