@@ -1,11 +1,12 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Unvi.DataStructures
 {
+	/// <summary>
+	///  This is an interface for a generic class that can act as a set object.
+	/// </summary>
 	public interface ISet<T>
 		: IEnumerable<T>
 	{
@@ -32,26 +33,26 @@ namespace Unvi.DataStructures
 		void Clear();
 
 		/// <summary>
-		/// Tells us if the current set is a subset of the other set.
+		/// Tells us if the current set is a subset of the other set. { this } &#8838; { other }
 		/// </summary>
 		bool IsSubsetOf(ISet<T> otherSet);
 		/// <summary>
-		/// Tells us if the current set is a superset of the other set.
+		/// Tells us if the current set is a superset of the other set. { this } &#8839; { other }
 		/// </summary>
 		bool IsSupersetOf(ISet<T> otherSet);
 
 		/// <summary>
-		/// Tells us if the current set is a proper subset of the other set.
+		/// Tells us if the current set is a proper subset of the other set. { this } &#8834; { other }
 		/// </summary>
 		/// <remarks>
 		/// A proper subset is a subset that is not equal to the other set.
 		/// </remarks>
 		bool IsProperSubsetOf(ISet<T> otherSet);
 		/// <summary>
-		/// Tells us if the current set is a proper superset of the other set.
+		/// Tells us if the current set is a proper superset of the other set. { this } &#8835; { other }
 		/// </summary>
 		/// <remarks>
-		/// A proper super set is a superset that is not equal to the other set.
+		/// A proper super set is a superset that is not equal to the other set. 
 		/// </remarks>
 		bool IsProperSupersetOf(ISet<T> otherSet);
 
