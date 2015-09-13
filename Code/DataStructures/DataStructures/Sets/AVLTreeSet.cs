@@ -89,7 +89,89 @@ namespace Unvi.DataStructures.Sets
 
 		public void Remove(T value)
 		{
-			throw new NotImplementedException();
+			if (value == null)
+				return;
+
+			if (!Contains(value))
+				return;
+
+			if (Count == 1)
+			{
+				_root = null;
+				Count = 0;
+				return;
+			}
+
+			Node parent = GetParentNode(value);
+			Node node = null;
+			Node replacement = null;
+
+			if (parent == null)
+				node = _root;
+			else
+				node = value.CompareTo(parent.Data) < 0 ? parent.Left : parent.Right;
+
+			if (node.Left == null)
+			{
+				replacement = node.Right;
+
+				if (parent == null)
+					_root = replacement;
+				else if (value.CompareTo(parent.Data) < 0)
+					parent.Left = replacement;
+				else
+					parent.Right = replacement;
+
+				if (replacement != null)
+					replacement.Parent = parent;
+
+				node.Right = null;
+				node.Parent = null;
+				Count--;
+				RebalanceTree(parent);
+
+				return;
+			}
+
+			replacement = node.Left;
+			while (replacement.Right != null)
+				replacement = replacement.Right;
+
+			Node rebalancePoint;
+			if (replacement == node.Left)
+			{
+				rebalancePoint = replacement;
+			}
+			else
+			{
+				rebalancePoint = replacement.Parent;
+
+				replacement.Parent.Right = replacement.Left;
+				replacement.Left.Parent = replacement.Parent;
+
+				replacement.Left = node.Left;
+				if (node.Left != null)
+					replacement.Left.Parent = replacement;
+			}
+
+			replacement.Right = node.Right;
+			if (replacement.Right != null)
+				replacement.Right.Parent = replacement;
+
+			if (parent == null)
+				_root = replacement;
+			else if (replacement.Data.CompareTo(parent.Data) < 0)
+				parent.Left = replacement;
+			else
+				parent.Right = replacement;
+			replacement.Parent = parent;
+
+			node.Left = null;
+			node.Right = null;
+			node.Parent = null;
+			Count--;
+
+			RebalanceTree(rebalancePoint);
 		}
 
 		public bool Contains(T value)
