@@ -226,12 +226,23 @@ namespace Unvi.DataStructures.Sets
 
 		public bool IsProperSubsetOf(ISet<T> otherSet)
 		{
-			throw new NotImplementedException();
+			if(otherSet == null)
+				return false;
+
+			if(this.Count >= otherSet.Count)
+				return false;
+			
+			return this.IsSubsetOf(otherSet);
 		}
 
 		public bool IsProperSupersetOf(ISet<T> otherSet)
 		{
-			throw new NotImplementedException();
+			if(otherSet == null)
+				return true;
+			if(this.Count <= otherSet.Count)
+				return false;
+
+			return this.IsSupersetOf(otherSet);
 		}
 		#endregion
 
