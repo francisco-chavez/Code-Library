@@ -248,7 +248,7 @@ namespace Unvi.DataStructures.Sets
 
 
 		#region Set Creation
-		public ISet<T> Instersection(ISet<T> otherSet)
+		public ISet<T> Intersection(ISet<T> otherSet)
 		{
 			if(otherSet == null || this.Count == 0 || otherSet.Count == 0)
 				return new AVLTreeSet<T>();

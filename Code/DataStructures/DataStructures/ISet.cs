@@ -63,7 +63,7 @@ namespace Unvi.DataStructures
 		/// <summary>
 		/// Returns a new set containing the intersection of this set and the other set. { this } &#8745; { other }
 		/// </summary>
-		ISet<T> Instersection(ISet<T> otherSet);
+		ISet<T> Intersection(ISet<T> otherSet);
 		/// <summary>
 		/// Returns a new set containing the complement of the other set in this set. In other words,
 		/// it returns this set minus the other set. { this } &#8722; { other }
