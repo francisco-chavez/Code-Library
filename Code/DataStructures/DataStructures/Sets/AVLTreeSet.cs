@@ -405,6 +405,7 @@ namespace Unvi.DataStructures.Sets
 
 		public IEnumerator<T> GetEnumerator()
 		{
+			/// Todo: Rewrite this to use a stack instead of a set.
 			AVLTreeSet<T> painted = new AVLTreeSet<T>();
 
 			var current = _root;

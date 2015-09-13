@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using Unvi.DataStructures.Sets;
 
 
 namespace Unvi.DataStructures.Dictionaries
 {
 	public class AVLTreeDictionary<TKey, TValue>
-		: IDictionary<TKey, TValue> where TKey : IComparable
+		: IDictionary<TKey, TValue> where TKey : IComparable<TKey>
 	{
 		#region Attributes
 		private Node _root;
@@ -225,7 +224,38 @@ namespace Unvi.DataStructures.Dictionaries
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
 		{
-			throw new NotImplementedException();
+			/// Todo: Rewrite this to use a stack instead of a set.
+			ISet<TKey> painted = new AVLTreeSet<TKey>();
+
+			var current = _root;
+
+			while (current != null)
+			{
+				if (current.Left != null && !painted.Contains(current.Left.Key))
+				{
+					current = current.Left;
+				}
+				else if (!painted.Contains(current.Key))
+				{
+					painted.Add(current.Key);
+					yield return new KeyValuePair<TKey, TValue>(current.Key, current.Value);
+				}
+				else if (current.Right != null && !painted.Contains(current.Right.Key))
+				{
+					current = current.Right;
+				}
+				else
+				{
+					current = current.Parent;
+				}
+			}
+
+			painted.Clear();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this.GetEnumerator();
 		}
 		#endregion
 
@@ -384,11 +414,6 @@ namespace Unvi.DataStructures.Dictionaries
 			replacement.UpdateHeight();
 
 			return replacement;
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			throw new NotImplementedException();
 		}
 		#endregion
 
