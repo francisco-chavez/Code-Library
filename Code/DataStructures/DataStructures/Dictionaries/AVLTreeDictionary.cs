@@ -16,8 +16,14 @@ namespace Unvi.DataStructures.Dictionaries
 
 
 		#region Properties
+		/// <summary>
+		/// Gets the current number of entries.
+		/// </summary>
 		public int Count { get; private set; }
 
+		/// <summary>
+		/// Gets or sets the entry under the given key.
+		/// </summary>
 		public TValue this[TKey key]
 		{
 			get
@@ -62,6 +68,9 @@ namespace Unvi.DataStructures.Dictionaries
 
 
 		#region Public Methods
+		/// <summary>
+		/// Adds given value as a new entry under the given key.
+		/// </summary>
 		public void Add(TKey key, TValue value)
 		{
 			if(key == null)
@@ -94,6 +103,9 @@ namespace Unvi.DataStructures.Dictionaries
 			RebalanceTree(node);
 		}
 
+		/// <summary>
+		/// Removes the entry under the given key.
+		/// </summary>
 		public void Remove(TKey key)
 		{
 			if(key == null)
@@ -196,6 +208,9 @@ namespace Unvi.DataStructures.Dictionaries
 			node.Parent = null;
 		}
 
+		/// <summary>
+		/// Removes all entries.
+		/// </summary>
 		public void Clear()
 		{
 			Clear(_root);
@@ -203,6 +218,9 @@ namespace Unvi.DataStructures.Dictionaries
 			Count = 0;
 		}
 
+		/// <summary>
+		/// Checks to see if there's an entry under the given key.
+		/// </summary>
 		public bool ContainsKey(TKey key)
 		{
 			if(key == null)
