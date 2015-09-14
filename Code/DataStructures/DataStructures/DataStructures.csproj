@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dictionaries\AVLTreeDictionary.cs" />
+    <Compile Include="Heaps\ListHeap.cs" />
     <Compile Include="HeapType.cs" />
     <Compile Include="IDictionary.cs" />
     <Compile Include="IHeap.cs" />
