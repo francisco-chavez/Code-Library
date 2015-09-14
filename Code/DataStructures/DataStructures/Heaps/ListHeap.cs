@@ -48,7 +48,73 @@ namespace Unvi.DataStructures.Heaps
 		#region Public Methods
 		public T Pop()
 		{
-			throw new NotImplementedException();
+			if (IsEmpty)
+				throw new InvalidOperationException("The heap is currently empty.");
+
+			T result = Peek;
+
+			if (Count == 1)
+			{
+				_data.Clear();
+				return result;
+			}
+
+			_data[0] = _data[Count - 1];
+			_data.RemoveAt(Count - 1);
+
+			int current = 0;
+			int left = LeftChildIndex(current);
+			int right = RightChildIndex(current);
+			bool keepGoing = true;
+
+			while (keepGoing)
+			{
+				if ((current >= Count - 1) || (left >= Count))
+				{
+					keepGoing = false;
+					continue;
+				}
+
+				int child = left;
+				// if has right child
+				if (right >= Count)
+				{
+					switch (HeapType)
+					{
+					case HeapType.Max:
+						child = _data[left].CompareTo(_data[right]) < 0 ? right : left;
+						break;
+					case HeapType.Min:
+						child = _data[left].CompareTo(_data[right]) > 0 ? right : left;
+						break;
+					}
+				}
+
+				switch (HeapType)
+				{
+				case HeapType.Max:
+					if (_data[current].CompareTo(_data[child]) >= 0)
+						keepGoing = false;
+					break;
+
+				case HeapType.Min:
+					if (_data[current].CompareTo(_data[child]) <= 0)
+						keepGoing = false;
+					break;
+				}
+
+				if (keepGoing)
+				{
+					T datum = _data[current];
+					_data[current] = _data[child];
+					_data[child] = datum;
+					current = child;
+					left = LeftChildIndex(current);
+					right = RightChildIndex(current);
+				}
+			}
+
+			return result;
 		}
 
 		public void Push(T value)
@@ -76,18 +142,18 @@ namespace Unvi.DataStructures.Heaps
 			if (index == 0)
 				return true;
 
-			int parentIndex = GetParentIndex(index);
-			bool result = false;
+			int parent = GetParentIndex(index);
 			switch (HeapType)
 			{
 			case HeapType.Max:
-				result = _data[index].CompareTo(_data[parentIndex]) <= 0;
-				break;
+				return _data[index].CompareTo(_data[parent]) <= 0;
+
 			case HeapType.Min:
-				result = _data[index].CompareTo(_data[parentIndex]) >= 0;
-				break;
+				return _data[index].CompareTo(_data[parent]) >= 0;
+
+			default: // needed to compile
+				return false;
 			}
-			return result;
 		}
 
 		private int GetParentIndex(int childIndex)
