@@ -17,11 +17,12 @@ namespace Unvi.Algorithms.Heaps
 			if (data == null)
 				throw new ArgumentNullException("There is no array to work on.");
 
-			if (data.Length < 2)
-				return;
-
 			if (data.Any(datum => { return datum == null; }))
 				throw new ArgumentException("There is one or more null entries in the array.");
+
+
+			if (data.Length < 2)
+				return;
 
 			for (int i = data.Length / 2; i > -1; i--)
 				data.FixMinHeap(i);
@@ -37,11 +38,12 @@ namespace Unvi.Algorithms.Heaps
 			if (data == null)
 				throw new ArgumentNullException("There is no array to work on.");
 
-			if (data.Length < 2)
-				return;
-
 			if (data.Any(datum => { return datum == null; }))
 				throw new ArgumentException("There is one or more null entries in the array.");
+
+
+			if (data.Length < 2)
+				return;
 
 			for (int i = data.Length / 2; i > -1; i--)
 				data.FixMaxHeap(i);
