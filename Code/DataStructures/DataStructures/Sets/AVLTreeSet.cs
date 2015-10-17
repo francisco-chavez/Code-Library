@@ -37,39 +37,9 @@ namespace Unvi.DataStructures.Sets
 					return _root.Height;
 			}
 		}
-		#endregion
 
-
-		#region Operators
-		public static ISet<T> operator +(AVLTreeSet<T> a, ISet<T> b)
-		{
-			if (a != null)
-				return a.Union(b);
-			else if (b != null)
-				return b.Union(a);
-			else
-				return null;
-		}
-
-		public static ISet<T> operator +(ISet<T> a, AVLTreeSet<T> b)
-		{
-			return b + a;
-		}
-
-		public static ISet<T> operator -(AVLTreeSet<T> a, ISet<T> b)
-		{
-			if(a == null)
-				return null;
-
-			return a.Complement(b);
-		}
-
-		public static ISet<T> operator -(ISet<T> a, AVLTreeSet<T> b)
-		{
-			if(a == null)
-				return null;
-
-			return a.Complement(b);
+		public bool IsReadOnly {
+			get { return false; }
 		}
 		#endregion
 
@@ -108,21 +78,21 @@ namespace Unvi.DataStructures.Sets
 		/// <summary>
 		/// Adds the given value to the set if it isn't already present.
 		/// </summary>
-		public void Add(T value)
+		public bool Add(T value)
 		{
 			// Null is not a valid value
 			if (value == null)
-				return;
+				return false;
 
 			// The value is already present
 			if (Contains(value))
-				return;
+				return false;
 
 			if (_root == null)
 			{
 				_root = new Node(value);
 				Count++;
-				return;
+				return true;
 			}
 
 			var parent = GetParentNode(value);
@@ -135,24 +105,29 @@ namespace Unvi.DataStructures.Sets
 
 			Count++;
 			RebalanceTree(newNode);
+			return true;
+		}
+
+		void ICollection<T>.Add(T item) {
+			Add(item);
 		}
 
 		/// <summary>
 		/// Removes the given value from the set if it is present.
 		/// </summary>
-		public void Remove(T value)
+		public bool Remove(T value)
 		{
 			if (value == null)
-				return;
+				return false;
 
 			if (!Contains(value))
-				return;
+				return false;
 
 			if (Count == 1)
 			{
 				_root = null;
 				Count = 0;
-				return;
+				return true;
 			}
 
 			Node parent = GetParentNode(value);
@@ -183,7 +158,7 @@ namespace Unvi.DataStructures.Sets
 				Count--;
 				RebalanceTree(parent);
 
-				return;
+				return true;
 			}
 
 			replacement = node.Left;
@@ -225,6 +200,7 @@ namespace Unvi.DataStructures.Sets
 			Count--;
 
 			RebalanceTree(rebalancePoint);
+			return true;
 		}
 
 		/// <summary>
@@ -262,16 +238,19 @@ namespace Unvi.DataStructures.Sets
 		/// <summary>
 		/// Tells us if the current set is a subset of the other set. { this } &#8838; { other }
 		/// </summary>
-		public bool IsSubsetOf(ISet<T> otherSet)
-		{
-			if (otherSet == null)
+		public bool IsSubsetOf(IEnumerable<T> other) {
+			if (other == null)
 				return false;
+
+			var otherSet = other as AVLTreeSet<T>;
+			if (otherSet == null)
+				otherSet = new AVLTreeSet<T>(other);
 
 			if (this == otherSet)
 				return true;
+
 			if (this.Count > otherSet.Count)
 				return false;
-
 			foreach (var value in this)
 				if (!otherSet.Contains(value))
 					return false;
@@ -385,21 +364,21 @@ namespace Unvi.DataStructures.Sets
 			return result;
 		}
 
-		/// <summary>
-		/// Returns a new set containing the symmetric difference of this set and the other
-		/// set. This is the complement of the intersection of both sets in the union of 
-		/// both sets.  (A &#8746; B) &#8722; (A &#8745; B)
-		/// </summary>
-		public ISet<T> SymmetricDifference(ISet<T> otherSet)
-		{
-			if (otherSet == null)
-				return new AVLTreeSet<T>(this);
+		///// <summary>
+		///// Returns a new set containing the symmetric difference of this set and the other
+		///// set. This is the complement of the intersection of both sets in the union of 
+		///// both sets.  (A &#8746; B) &#8722; (A &#8745; B)
+		///// </summary>
+		//public ISet<T> SymmetricDifference(ISet<T> otherSet)
+		//{
+		//	if (otherSet == null)
+		//		return new AVLTreeSet<T>(this);
 
-			var union = this.Union(otherSet);
-			var intersection = this.Intersection(otherSet);
+		//	var union = this.Union(otherSet);
+		//	var intersection = this.Intersection(otherSet);
 
-			return union.Complement(intersection);
-		}
+		//	return union.Complement(intersection);
+		//}
 		#endregion
 
 
@@ -596,6 +575,46 @@ namespace Unvi.DataStructures.Sets
 			n.Left = null;
 			n.Right = null;
 			n.Parent = null;
+		}
+
+		public void UnionWith(IEnumerable<T> other) {
+			throw new NotImplementedException();
+		}
+
+		public void IntersectWith(IEnumerable<T> other) {
+			throw new NotImplementedException();
+		}
+
+		public void ExceptWith(IEnumerable<T> other) {
+			throw new NotImplementedException();
+		}
+
+		public void SymmetricExceptWith(IEnumerable<T> other) {
+			throw new NotImplementedException();
+		}
+
+		public bool IsSupersetOf(IEnumerable<T> other) {
+			throw new NotImplementedException();
+		}
+
+		public bool IsProperSupersetOf(IEnumerable<T> other) {
+			throw new NotImplementedException();
+		}
+
+		public bool IsProperSubsetOf(IEnumerable<T> other) {
+			throw new NotImplementedException();
+		}
+
+		public bool Overlaps(IEnumerable<T> other) {
+			throw new NotImplementedException();
+		}
+
+		public bool SetEquals(IEnumerable<T> other) {
+			throw new NotImplementedException();
+		}
+
+		public void CopyTo(T[] array, int arrayIndex) {
+			throw new NotImplementedException();
 		}
 		#endregion
 
