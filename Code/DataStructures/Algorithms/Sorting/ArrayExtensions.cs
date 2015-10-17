@@ -11,7 +11,6 @@ namespace Unvi.Algorithms.Sorting
 {
 	public static class ArrayExtensions 
 	{
-		#region Normal Heap Sort Code
 		public static void HeapSort<T>(this T[] array)
 			where T : IComparable<T> 
 		{
@@ -23,6 +22,17 @@ namespace Unvi.Algorithms.Sorting
 				array[--heapLength] = maxValue;
 			}
 		}
-		#endregion
+
+		public static void QuickSort<T>(this T[] array)
+			where T : IComparable<T>
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void RandomQuickStort<T>(this T[] array)
+			where T : IComparable<T> 
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
