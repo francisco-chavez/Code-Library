@@ -45,12 +45,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sorting\ArrayExtensions.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DataStructures\DataStructures.csproj">
-      <Project>{7743ba05-ff81-4a07-8748-1d0d36251a76}</Project>
-      <Name>DataStructures</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

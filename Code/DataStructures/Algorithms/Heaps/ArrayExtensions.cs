@@ -28,7 +28,7 @@ namespace Unvi.Algorithms.Heaps
 		/// with the largest value at index 0.
 		/// </summary>
 		public static void HeapifyMax<T>(this T[] data)
-			where T : IComparable, IComparable<T>
+			where T : IComparable<T>
 		{
 			if (data == null)
 				throw new ArgumentNullException("There is no array to work on.");
@@ -61,10 +61,85 @@ namespace Unvi.Algorithms.Heaps
 			for (int i = length / 2; i > -1; i--)
 				data.FixMaxHeap(i, length);
 		}
+
+		internal static T PopMin<T>(this T[] data, int length)
+			where T : IComparable<T>
+		{
+			if ((data == null) || (length <= 0))
+				throw new Exception("There's no data to work with.");
+
+			if (data.Length < length)
+				throw new Exception("Length mismatch in array.");
+
+
+			T result = data[0];
+
+			if (length == 1)
+				return result;
+
+			data[0] = data[length - 1];
+			data.FixMinHeapAfterPop(0, length - 1);
+
+			return result;
+		}
+
+		internal static T PopMax<T>(this T[] data, int length)
+			where T : IComparable<T>
+		{
+			if ((data == null) || (length <= 0))
+				throw new Exception("There's no data to work with.");
+
+			if (data.Length < length)
+				throw new Exception("Length mismatch in array.");
+
+			T result = data[0];
+
+			if (length == 1)
+				return result;
+
+			data[0] = data[length - 1];
+			data.FixMaxHeapAfterPop(0, length - 1);
+
+			return result;
+		}
 		#endregion
 
 
 		#region Helper Methods
+		private static void FixMinHeapAfterPop<T>(this T[] data, int parent, int length)
+			where T : IComparable<T>
+		{
+			while (!data.IsMinHeap(parent, length)) 
+			{
+				int child = parent * 2 + 1;
+				int right = parent * 2 + 2;
+
+				// if has right child
+				if (right < length)
+					child = data[child].CompareTo(data[right]) > 0 ? right : child;
+
+				data.SwapValues(parent, child);
+				parent = child;
+			}
+		}
+
+		private static void FixMaxHeapAfterPop<T>(this T[] data, int parent, int length)
+			where T : IComparable<T>
+		{
+			while (!data.IsMaxHeap(parent, length)) 
+			{
+				int child = parent * 2 + 1;
+				int right = parent * 2 + 2;
+
+				// if has right child
+				if (right < length) 
+					child = data[child].CompareTo(data[right]) < 0 ? right : child;
+
+				data.SwapValues(parent, child);
+				parent = child;
+			}
+		}
+
 		private static void FixMinHeap<T>(this T[] data, int index, int length)
 			where T : IComparable<T>
 		{
