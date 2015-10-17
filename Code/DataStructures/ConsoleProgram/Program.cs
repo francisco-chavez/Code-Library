@@ -12,10 +12,11 @@ namespace ConsoleProgram
 	{
 		static void Main(string[] args)
 		{
-			List<int> sourceData1 = new List<int>(new int[] { 30, 100, 437, 3, 0, -2947593, 2984, 3, 2, 1 });
+			int testItemCount = 20;
+			List<int> sourceData1 = new List<int>(testItemCount);
 			Random r = new Random(5);
-			for(int i = 0; i < 500; i++)
-				sourceData1.Add(r.Next(-2000, 2000));
+			for (int i = 0; i < testItemCount; i++)
+				sourceData1.Add(r.Next(-5000, 5000));
 
 			int testCount = 3000;
 
@@ -25,6 +26,7 @@ namespace ConsoleProgram
 			DateTime t2End;
 
 			var dump = sourceData1.ToArray();
+			dump.HeapSort();
 		}
 	}
 }

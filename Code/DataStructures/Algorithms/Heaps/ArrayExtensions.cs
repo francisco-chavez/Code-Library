@@ -58,7 +58,7 @@ namespace Unvi.Algorithms.Heaps
 			if (data.Length < 2)
 				return;
 
-			for (int i = length / 2; i > -1; i--)
+			for (int i = length / 2; i >= 0; i--)
 				data.FixMaxHeap(i, length);
 		}
 
@@ -78,7 +78,7 @@ namespace Unvi.Algorithms.Heaps
 				return result;
 
 			data[0] = data[length - 1];
-			data.FixMinHeapAfterPop(0, length - 1);
+			data.FixMinHeap(0, length - 1);
 
 			return result;
 		}
@@ -98,7 +98,7 @@ namespace Unvi.Algorithms.Heaps
 				return result;
 
 			data[0] = data[length - 1];
-			data.FixMaxHeapAfterPop(0, length - 1);
+			data.FixMaxHeap(0, length - 1);
 
 			return result;
 		}
@@ -106,40 +106,6 @@ namespace Unvi.Algorithms.Heaps
 
 
 		#region Helper Methods
-		private static void FixMinHeapAfterPop<T>(this T[] data, int parent, int length)
-			where T : IComparable<T>
-		{
-			while (!data.IsMinHeap(parent, length)) 
-			{
-				int child = parent * 2 + 1;
-				int right = parent * 2 + 2;
-
-				// if has right child
-				if (right < length)
-					child = data[child].CompareTo(data[right]) > 0 ? right : child;
-
-				data.SwapValues(parent, child);
-				parent = child;
-			}
-		}
-
-		private static void FixMaxHeapAfterPop<T>(this T[] data, int parent, int length)
-			where T : IComparable<T>
-		{
-			while (!data.IsMaxHeap(parent, length)) 
-			{
-				int child = parent * 2 + 1;
-				int right = parent * 2 + 2;
-
-				// if has right child
-				if (right < length) 
-					child = data[child].CompareTo(data[right]) < 0 ? right : child;
-
-				data.SwapValues(parent, child);
-				parent = child;
-			}
-		}
-
 		private static void FixMinHeap<T>(this T[] data, int index, int length)
 			where T : IComparable<T>
 		{
@@ -155,6 +121,7 @@ namespace Unvi.Algorithms.Heaps
 				min = right;
 
 			data.SwapValues(index, min);
+			data.FixMinHeap(min, length);
 		}
 
 		private static void FixMaxHeap<T>(this T[] data, int index, int length)
@@ -163,7 +130,7 @@ namespace Unvi.Algorithms.Heaps
 			if (data.IsMaxHeap(index, length))
 				return;
 
-			int left = (index * 2) + 1;
+			int left  = (index * 2) + 1;
 			int right = (index * 2) + 2;
 
 			int max = left;
@@ -172,6 +139,7 @@ namespace Unvi.Algorithms.Heaps
 				max = right;
 
 			data.SwapValues(index, max);
+			data.FixMaxHeap(max, length);
 		}
 
 		private static bool IsMinHeap<T>(this T[] data, int index, int length)
@@ -195,7 +163,7 @@ namespace Unvi.Algorithms.Heaps
 		private static bool IsMaxHeap<T>(this T[] data, int index, int length)
 			where T : IComparable<T>
 		{
-			int left = (index * 2) + 1;
+			int left  = (index * 2) + 1;
 			int right = (index * 2) + 2;
 
 			if (left >= length)

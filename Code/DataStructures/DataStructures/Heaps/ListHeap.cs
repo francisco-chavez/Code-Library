@@ -142,6 +142,7 @@ namespace Unvi.DataStructures.Heaps
 				_data[parent] = _data[child];
 				_data[child] = datum;
 				parent = child;
+				FixHeap(child);
 			}
 		}
 
@@ -200,7 +201,6 @@ namespace Unvi.DataStructures.Heaps
 
 			return true;
 		}
-
 
 		private int FindParent(int childIndex)
 		{

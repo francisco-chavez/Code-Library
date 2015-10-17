@@ -17,10 +17,10 @@ namespace Unvi.Algorithms.Sorting
 		{
 			array.HeapifyMax();
 
-			for (int heapEnd = array.Length; heapEnd > 0; heapEnd--) 
-			{
-				T maxVal = array.PopMax(heapEnd);
-				array[heapEnd - 1] = maxVal;
+			int heapLength = array.Length;
+			while (heapLength > 1) {
+				T maxValue = array.PopMax(heapLength);
+				array[--heapLength] = maxValue;
 			}
 		}
 		#endregion
