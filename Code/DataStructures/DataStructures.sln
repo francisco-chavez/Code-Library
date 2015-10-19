@@ -11,18 +11,25 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algorithms", "Algorithms\Al
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		CountSwaps|Any CPU = CountSwaps|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{44A7CAE8-D9A8-40EB-8580-B41B373560B6}.CountSwaps|Any CPU.ActiveCfg = CountSwaps|Any CPU
+		{44A7CAE8-D9A8-40EB-8580-B41B373560B6}.CountSwaps|Any CPU.Build.0 = CountSwaps|Any CPU
 		{44A7CAE8-D9A8-40EB-8580-B41B373560B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{44A7CAE8-D9A8-40EB-8580-B41B373560B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44A7CAE8-D9A8-40EB-8580-B41B373560B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44A7CAE8-D9A8-40EB-8580-B41B373560B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7743BA05-FF81-4A07-8748-1D0D36251A76}.CountSwaps|Any CPU.ActiveCfg = CountSwaps|Any CPU
+		{7743BA05-FF81-4A07-8748-1D0D36251A76}.CountSwaps|Any CPU.Build.0 = CountSwaps|Any CPU
 		{7743BA05-FF81-4A07-8748-1D0D36251A76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7743BA05-FF81-4A07-8748-1D0D36251A76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7743BA05-FF81-4A07-8748-1D0D36251A76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7743BA05-FF81-4A07-8748-1D0D36251A76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3ABFA9B4-86E1-4825-83C2-8771CDB81DFE}.CountSwaps|Any CPU.ActiveCfg = CountSwaps|Any CPU
+		{3ABFA9B4-86E1-4825-83C2-8771CDB81DFE}.CountSwaps|Any CPU.Build.0 = CountSwaps|Any CPU
 		{3ABFA9B4-86E1-4825-83C2-8771CDB81DFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3ABFA9B4-86E1-4825-83C2-8771CDB81DFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3ABFA9B4-86E1-4825-83C2-8771CDB81DFE}.Release|Any CPU.ActiveCfg = Release|Any CPU

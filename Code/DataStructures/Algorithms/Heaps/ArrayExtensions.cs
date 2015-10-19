@@ -97,15 +97,20 @@ namespace Unvi.Algorithms.Heaps
 			if (length == 1)
 				return result;
 
-			data[0] = data[length - 1];
+			data.SwapValues(0, length - 1);
+
+#if CountSwaps
+			Sorting.ArrayExtensions.HeapSwapCount++;
+#endif
+
 			data.FixMaxHeap(0, length - 1);
 
 			return result;
 		}
-		#endregion
+#endregion
 
 
-		#region Helper Methods
+#region Helper Methods
 		private static void FixMinHeap<T>(this T[] data, int index, int length)
 			where T : IComparable<T>
 		{
@@ -139,6 +144,10 @@ namespace Unvi.Algorithms.Heaps
 				max = right;
 
 			data.SwapValues(index, max);
+
+#if CountSwaps
+			Sorting.ArrayExtensions.HeapSwapCount++;
+#endif
 			data.FixMaxHeap(max, length);
 		}
 
@@ -177,6 +186,6 @@ namespace Unvi.Algorithms.Heaps
 
 			return true;
 		}
-		#endregion
+#endregion
 	}
 }
