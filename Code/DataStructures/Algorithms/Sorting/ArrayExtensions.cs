@@ -14,6 +14,9 @@ namespace Unvi.Algorithms.Sorting
 #if CountSwaps
 		public static int QuickSwapCount;
 		public static int HeapSwapCount;
+
+		public static int QuickCompareCount;
+		public static int HeapCompareCount;
 #endif
 
 		public static void HeapSort<T>(this T[] array)
@@ -21,6 +24,7 @@ namespace Unvi.Algorithms.Sorting
 		{
 #if CountSwaps
 			HeapSwapCount = 0;
+			HeapCompareCount = 0;
 #endif
 			array.HeapifyMax();
 
@@ -53,6 +57,7 @@ namespace Unvi.Algorithms.Sorting
 
 #if CountSwaps
 			QuickSwapCount = 0;
+			QuickCompareCount = 0;
 #endif
 			array.QuickSort(0, array.Length);
 		}
@@ -69,6 +74,9 @@ namespace Unvi.Algorithms.Sorting
 
 			for (int i = 0; i < pivitPoint; i++)
 			{
+#if CountSwaps
+				QuickCompareCount++;
+#endif
 				if (pivitValue.CompareTo(array[i]) < 0)
 				{
 					pivitPoint--;

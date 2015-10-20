@@ -140,6 +140,10 @@ namespace Unvi.Algorithms.Heaps
 
 			int max = left;
 
+#if CountSwaps
+			if (right < length)
+				Sorting.ArrayExtensions.HeapCompareCount++;
+#endif
 			if (right < length && data[right].CompareTo(data[left]) > 0)
 				max = right;
 
@@ -178,9 +182,16 @@ namespace Unvi.Algorithms.Heaps
 			if (left >= length)
 				return true;
 
+#if CountSwaps
+			Sorting.ArrayExtensions.HeapCompareCount++;
+#endif
 			if (data[index].CompareTo(data[left]) < 0)
 				return false;
 
+#if CountSwaps
+			if (right < length)
+				Sorting.ArrayExtensions.HeapCompareCount++;
+#endif
 			if (right < length)
 				return data[index].CompareTo(data[right]) >= 0;
 
