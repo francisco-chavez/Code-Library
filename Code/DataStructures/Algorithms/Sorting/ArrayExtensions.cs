@@ -62,6 +62,23 @@ namespace Unvi.Algorithms.Sorting
 			array.QuickSort(0, array.Length);
 		}
 
+		public static void RandomQuickStort<T>(this T[] array)
+			where T : IComparable<T> 
+		{
+			if (array == null)
+				throw new ArgumentNullException("There is no array to sort.");
+
+			if (array.Any(d => { return d == null; }))
+				throw new ArgumentNullException("There is null data in the array.");
+
+			if (array.Length < 2)
+				return;
+
+			Random randomGen = new Random((int) DateTime.Now.Ticks);
+
+			array.RandomQuickSort(0, array.Length, randomGen);
+		}
+
 		private static void QuickSort<T>(this T[] array, int start, int end)
 			where T : IComparable<T>
 		{
@@ -69,18 +86,18 @@ namespace Unvi.Algorithms.Sorting
 			if (end - start < 2)
 				return;
 
-			int pivitPoint = end - 1;
-			T pivitValue = array[pivitPoint];
+			int pivotPoint = end - 1;
+			T pivotValue = array[pivotPoint];
 
-			for (int i = 0; i < pivitPoint; i++)
+			for (int i = 0; i < pivotPoint; i++)
 			{
 #if CountSwaps
 				QuickCompareCount++;
 #endif
-				if (pivitValue.CompareTo(array[i]) < 0)
+				if (pivotValue.CompareTo(array[i]) < 0)
 				{
-					pivitPoint--;
-					array.SwapValues(i, pivitPoint);
+					pivotPoint--;
+					array.SwapValues(i, pivotPoint);
 #if CountSwaps
 					QuickSwapCount++;
 #endif
@@ -88,9 +105,9 @@ namespace Unvi.Algorithms.Sorting
 				}
 			}
 
-			if (pivitPoint != end - 1)
+			if (pivotPoint != end - 1)
 			{
-				array.SwapValues(pivitPoint, end - 1);
+				array.SwapValues(pivotPoint, end - 1);
 #if CountSwaps
 				QuickSwapCount++;
 #endif
@@ -99,14 +116,38 @@ namespace Unvi.Algorithms.Sorting
 			if (end - start < 3)
 				return;
 
-			array.QuickSort(start, pivitPoint);
-			array.QuickSort(pivitPoint + 1, end);
+			array.QuickSort(start, pivotPoint);
+			array.QuickSort(pivotPoint + 1, end);
 		}
 
-		public static void RandomQuickStort<T>(this T[] array)
-			where T : IComparable<T> 
+		private static void RandomQuickSort<T>(this T[] array, int start, int end, Random randomGen)
+			where T : IComparable<T>
 		{
-			throw new NotImplementedException();
+			// There are less than 2 items, therefore, it's already sorted.
+			if (end - start < 2)
+				return;
+
+			int pivotPoint = randomGen.Next(start, end);
+			array.SwapValues(pivotPoint, end - 1);
+			pivotPoint = end - 1;
+			T pivotValue = array[pivotPoint];
+
+			for (int i = 0; i < pivotPoint; i++)
+				if (pivotValue.CompareTo(array[i]) < 0)
+				{
+					pivotPoint--;
+					array.SwapValues(i, pivotPoint);
+					i--;
+				}
+
+			if (pivotPoint != end - 1)
+				array.SwapValues(pivotPoint, end - 1);
+
+			if (end - start < 3)
+				return;
+
+			array.QuickSort(start, pivotPoint);
+			array.QuickSort(pivotPoint + 1, end);
 		}
 	}
 }
