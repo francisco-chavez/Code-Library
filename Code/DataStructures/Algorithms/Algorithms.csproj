@@ -60,6 +60,8 @@
   <ItemGroup>
     <Compile Include="ArrayExtensions.cs" />
     <Compile Include="Heaps\ArrayExtensions.cs" />
+    <Compile Include="Heaps\ListExtensions.cs" />
+    <Compile Include="ListExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sorting\ArrayExtensions.cs" />
   </ItemGroup>
