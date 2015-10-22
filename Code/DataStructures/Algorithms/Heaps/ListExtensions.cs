@@ -36,7 +36,15 @@ namespace Unvi.Algorithms.Heaps
 				return;
 
 			int left = (index * 2) + 1;
-			int right = left + 1;
+			int right = left + 1;       // Previous code: int right = (index * 2) + 2;
+										//		
+										// Odd, this cuts down the amount of work needed. Yet,
+										// when you throw pipelines into the picture, this may
+										// end up taking longer because we now need to wait
+										// for the CPU to finish calculating the value of 'left' 
+										// before it can start running the instructions for 
+										// calculating 'right'
+										// -FCT
 
 			int min = left;
 
