@@ -1,6 +1,4 @@
-﻿#define CountSwaps
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +14,7 @@ namespace SortingMetrics
 	{
 		static void Main(string[] args)
 		{
+#if CountSwaps
 			Random r = new Random(0);
 			for (int i = 64; i < 700; i *= 2)
 			{
@@ -30,8 +29,10 @@ namespace SortingMetrics
 					System.Threading.Thread.Sleep(1500);
 				}
 			}
+#endif
 		}
 
+#if CountSwaps
 		static void RunTest(List<int> sourceData)
 		{
 			var quick = sourceData.ToArray();
@@ -55,5 +56,6 @@ namespace SortingMetrics
 			Console.WriteLine("    Switch Count:     {0}", switchCountH);
 			Console.WriteLine();
 		}
+#endif
 	}
 }
