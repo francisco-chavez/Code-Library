@@ -12,7 +12,7 @@ namespace Unvi.Algorithms.Heaps
 		/// with the smallest value at index 0.
 		/// </summary>
 		public static void HeapifyMin<T>(this T[] data)
-			where T : IComparable, IComparable<T>
+			where T : IComparable<T>
 		{
 			if (data == null)
 				throw new ArgumentNullException("There is no array to work on.");
