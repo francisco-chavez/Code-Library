@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Unvi.Algorithms.Sorting;
+using Unvi.Algorithms.Heaps;
 
 
 namespace ConsoleProgram
@@ -14,34 +14,34 @@ namespace ConsoleProgram
 	{
 		static void Main(string[] args)
 		{
-			int testItemCount = 200;
-			List<int> sourceData1 = new List<int>(testItemCount);
-			Random r = new Random(5);
-			for (int i = 0; i < testItemCount; i++)
-				sourceData1.Add(r.Next(-5000, 5000));
+			List<int> sourceData = new List<int>(new int[] { -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 });
+			sourceData.Reverse();
 
-			List<int> sourceData2 = new List<int>(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 });
-			List<int> sourceData3 = new List<int>(new int[] { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 });
+			sourceData.HeapifyMin();
+			var isHeap = IsMinHeap(sourceData);
+		}
 
+		private static bool IsMinHeap(List<int> heap)
+		{
+			for (int i = heap.Count / 2; i >= 0; i--)
+			{
+				int left = i * 2 + 1;
+				int right = left + 1;
 
-			var dump = sourceData3.ToArray();
-			dump.QuickSort();
+				if (left >= heap.Count)
+					continue;
 
-			//bool isSorted = true;
-			//for (int i = 0; i < dump.Length - 1; i++)
-			//	if (dump[i] > dump[i + 1])
-			//	{
-			//		isSorted = false;
-			//		break;
-			//	}
+				if (heap[i] > heap[left])
+					return false;
 
-#if CountSwaps
-			int swapsQuick = ArrayExtensions.QuickSwapCount;
-			int swapsHeap = ArrayExtensions.HeapSwapCount;
-			Console.WriteLine("Array Length: {0}", dump.Length);
-			Console.WriteLine("Quick Swaps: {0}", swapsQuick);
-			Console.WriteLine("Heap Swaps: {0}", swapsHeap);
-#endif
+				if (right >= heap.Count)
+					continue;
+
+				if (heap[i] > heap[right])
+					return false;
+			}
+
+			return true;
 		}
 	}
 }

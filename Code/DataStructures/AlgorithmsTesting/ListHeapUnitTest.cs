@@ -98,7 +98,7 @@ namespace AlgorithmsTesting
 			for (int i = heap.Count / 2; i >= 0; i--)
 			{
 				int left = i * 2 + 1;
-				int right = left + 2;
+				int right = left + 1;
 
 				if (left >= heap.Count)
 					continue;
