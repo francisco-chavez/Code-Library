@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Unvi.Algorithms.Heaps
 {
 	public static class ListExtensions
@@ -19,6 +20,20 @@ namespace Unvi.Algorithms.Heaps
 			data.HeapifyMin(data.Count);
 		}
 
+		public static void HeapifyMax<T>(this List<T> data)
+			where T : IComparable<T>
+		{
+			if (data == null)
+				throw new ArgumentNullException("data");
+
+			if (data.Any(datum => {
+				return datum == null;
+			}))
+				throw new ArgumentNullException("There are one or more null entries in the list.");
+
+			data.HeapifyMax(data.Count);
+		}
+
 		internal static void HeapifyMin<T>(this List<T> data, int length)
 			where T : IComparable<T>
 		{
@@ -27,6 +42,16 @@ namespace Unvi.Algorithms.Heaps
 
 			for (int i = length / 2; i > -1; i--)
 				data.FixMinHeap(i, length);
+		}
+
+		internal static void HeapifyMax<T>(this List<T> data, int length)
+			where T : IComparable<T>
+		{
+			if (length < 2)
+				return;
+
+			for (int i = length / 2; i >= 0; i--)
+				data.FixMaxHeap(i, length);
 		}
 
 		private static void FixMinHeap<T>(this List<T> data, int index, int length)
@@ -55,6 +80,24 @@ namespace Unvi.Algorithms.Heaps
 			data.FixMinHeap(min, length);
 		}
 
+		private static void FixMaxHeap<T>(this List<T> data, int index, int length)
+			where T : IComparable<T>
+		{
+			if (data.IsMaxHeap(index, length))
+				return;
+
+			int left = index * 2 + 1;
+			int right = left + 1;
+
+			int max = left;
+
+			if (right < length && data[right].CompareTo(data[left]) > 0)
+				max = right;
+
+			data.SwapValues(index, max);
+			data.FixMaxHeap(max, length);
+		}
+
 		private static bool IsMinHeap<T>(this List<T> data, int index, int length)
 			where T : IComparable<T>
 		{
@@ -69,6 +112,24 @@ namespace Unvi.Algorithms.Heaps
 
 			if (right < length)
 				return data[index].CompareTo(data[right]) <= 0;
+
+			return true;
+		}
+
+		private static bool IsMaxHeap<T>(this List<T> data, int index, int length)
+			where T : IComparable<T>
+		{
+			int left = index * 2 + 1;
+			int right = left + 1;
+
+			if (left >= length)
+				return true;
+
+			if (data[index].CompareTo(data[left]) < 0)
+				return false;
+
+			if (right < length)
+				return data[index].CompareTo(data[right]) >= 0;
 
 			return true;
 		}
