@@ -74,7 +74,7 @@ namespace AlgorithmsTesting
 		public void DoesMinHeapifyRandomTest()
 		{
 			Random r = new Random(0);
-			int testCount = 50;
+			int testCount = 200;
 
 			for (int i = 6; i < testCount + 6; i++)
 			{
