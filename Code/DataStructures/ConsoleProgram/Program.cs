@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Unvi.Algorithms.Heaps;
+using Unvi.DataStructures.Dictionaries;
 
 
 namespace ConsoleProgram
@@ -14,34 +15,19 @@ namespace ConsoleProgram
 	{
 		static void Main(string[] args)
 		{
-			List<int> sourceData = new List<int>(new int[] { -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 });
-			sourceData.Reverse();
+			var dictionary = new AVLTreeDictionary<int, char>();
 
-			sourceData.HeapifyMin();
-			var isHeap = IsMinHeap(sourceData);
-		}
+			dictionary.Add(1, 'a');
+			dictionary.Add(2, 'b');
+			dictionary.Add(3, 'c');
+			dictionary.Add(4, 'd');
+			dictionary.Add(5, 'e');
+			dictionary.Add(6, 'f');
+			dictionary.Add(7, 'g');
+			dictionary.Add(8, 'h');
 
-		private static bool IsMinHeap(List<int> heap)
-		{
-			for (int i = heap.Count / 2; i >= 0; i--)
-			{
-				int left = i * 2 + 1;
-				int right = left + 1;
-
-				if (left >= heap.Count)
-					continue;
-
-				if (heap[i] > heap[left])
-					return false;
-
-				if (right >= heap.Count)
-					continue;
-
-				if (heap[i] > heap[right])
-					return false;
-			}
-
-			return true;
+			foreach (var p in dictionary)
+				Console.WriteLine(p.Value);
 		}
 	}
 }

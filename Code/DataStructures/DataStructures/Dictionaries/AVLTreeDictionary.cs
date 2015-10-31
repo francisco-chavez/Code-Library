@@ -239,37 +239,63 @@ namespace Unvi.DataStructures.Dictionaries
 			return node != null;
 		}
 
-
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
 		{
-			/// Todo: Rewrite this to use a stack instead of a set.
-			ISet<TKey> painted = new AVLTreeSet<TKey>();
-
-			var current = _root;
-
-			while (current != null)
-			{
-				if (current.Left != null && !painted.Contains(current.Left.Key))
-				{
-					current = current.Left;
-				}
-				else if (!painted.Contains(current.Key))
-				{
-					painted.Add(current.Key);
-					yield return new KeyValuePair<TKey, TValue>(current.Key, current.Value);
-				}
-				else if (current.Right != null && !painted.Contains(current.Right.Key))
-				{
-					current = current.Right;
-				}
-				else
-				{
-					current = current.Parent;
-				}
-			}
-
-			painted.Clear();
+			var t = TransverseTree(_root);
+			while (t.MoveNext())
+				yield return t.Current;
+			t.Dispose();
 		}
+
+		private IEnumerator<KeyValuePair<TKey, TValue>> TransverseTree(Node parent)
+		{
+			if (parent == null)
+				yield break;
+
+			var visitLeft = TransverseTree(parent.Left);
+			while (visitLeft.MoveNext())
+				yield return visitLeft.Current;
+			visitLeft.Dispose();
+
+			yield return new KeyValuePair<TKey, TValue>(parent.Key, parent.Value);
+
+			var visitRight = TransverseTree(parent.Right);
+			while (visitRight.MoveNext())
+				yield return visitRight.Current;
+			visitRight.Dispose();
+		}
+
+
+		//public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+		//{
+			///// Todo: Rewrite this to use a stack instead of a set.
+			//ISet<TKey> painted = new AVLTreeSet<TKey>();
+
+			//var current = _root;
+
+			//while (current != null)
+			//{
+			//	if (current.Left != null && !painted.Contains(current.Left.Key))
+			//	{
+			//		current = current.Left;
+			//	}
+			//	else if (!painted.Contains(current.Key))
+			//	{
+			//		painted.Add(current.Key);
+			//		yield return new KeyValuePair<TKey, TValue>(current.Key, current.Value);
+			//	}
+			//	else if (current.Right != null && !painted.Contains(current.Right.Key))
+			//	{
+			//		current = current.Right;
+			//	}
+			//	else
+			//	{
+			//		current = current.Parent;
+			//	}
+			//}
+
+			//painted.Clear();
+		//}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
