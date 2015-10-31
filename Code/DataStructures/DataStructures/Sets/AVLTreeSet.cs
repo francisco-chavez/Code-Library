@@ -635,7 +635,7 @@ namespace Unvi.DataStructures.Sets
 				get
 				{
 					int leftHeight  = Left  == null ? 0 : Left.Height;
-					int rightHeight = Right == null ? 0 : Left.Height;
+					int rightHeight = Right == null ? 0 : Right.Height;
 
 					return leftHeight - rightHeight;
 				}

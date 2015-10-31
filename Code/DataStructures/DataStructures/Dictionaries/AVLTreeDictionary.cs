@@ -268,33 +268,33 @@ namespace Unvi.DataStructures.Dictionaries
 
 		//public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
 		//{
-			///// Todo: Rewrite this to use a stack instead of a set.
-			//ISet<TKey> painted = new AVLTreeSet<TKey>();
+		//	/// Todo: Rewrite this to use a stack instead of a set.
+		//	ISet<TKey> painted = new AVLTreeSet<TKey>();
 
-			//var current = _root;
+		//	var current = _root;
 
-			//while (current != null)
-			//{
-			//	if (current.Left != null && !painted.Contains(current.Left.Key))
-			//	{
-			//		current = current.Left;
-			//	}
-			//	else if (!painted.Contains(current.Key))
-			//	{
-			//		painted.Add(current.Key);
-			//		yield return new KeyValuePair<TKey, TValue>(current.Key, current.Value);
-			//	}
-			//	else if (current.Right != null && !painted.Contains(current.Right.Key))
-			//	{
-			//		current = current.Right;
-			//	}
-			//	else
-			//	{
-			//		current = current.Parent;
-			//	}
-			//}
+		//	while (current != null)
+		//	{
+		//		if (current.Left != null && !painted.Contains(current.Left.Key))
+		//		{
+		//			current = current.Left;
+		//		}
+		//		else if (!painted.Contains(current.Key))
+		//		{
+		//			painted.Add(current.Key);
+		//			yield return new KeyValuePair<TKey, TValue>(current.Key, current.Value);
+		//		}
+		//		else if (current.Right != null && !painted.Contains(current.Right.Key))
+		//		{
+		//			current = current.Right;
+		//		}
+		//		else
+		//		{
+		//			current = current.Parent;
+		//		}
+		//	}
 
-			//painted.Clear();
+		//	painted.Clear();
 		//}
 
 		IEnumerator IEnumerable.GetEnumerator()

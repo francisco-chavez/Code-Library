@@ -17,17 +17,20 @@ namespace ConsoleProgram
 		{
 			var dictionary = new AVLTreeDictionary<int, char>();
 
-			dictionary.Add(1, 'a');
-			dictionary.Add(2, 'b');
-			dictionary.Add(3, 'c');
-			dictionary.Add(4, 'd');
-			dictionary.Add(5, 'e');
-			dictionary.Add(6, 'f');
-			dictionary.Add(7, 'g');
-			dictionary.Add(8, 'h');
+			for (int i = 0; i < 10000; i++)
+				dictionary.Add(i, 'a');
 
-			foreach (var p in dictionary)
-				Console.WriteLine(p.Value);
+			var current = 'b';
+			DateTime start;
+			DateTime end;
+
+			start = DateTime.Now;
+			for (int i = 0; i < 1000; i++)
+				foreach (var p in dictionary)
+					current = p.Value;
+			end = DateTime.Now;
+
+			var time = end - start;
 		}
 	}
 }
