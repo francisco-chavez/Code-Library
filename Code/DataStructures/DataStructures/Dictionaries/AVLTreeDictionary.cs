@@ -241,11 +241,41 @@ namespace Unvi.DataStructures.Dictionaries
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
 		{
-			var t = TransverseTree(_root);
-			while (t.MoveNext())
-				yield return t.Current;
-			t.Dispose();
+			if (_root == null)
+				yield break;
+
+			var stack = new Node[_root.Height];
+			int loc = 0;
+			var current = _root;
+
+			FillStack(stack, ref loc, current);
+
+			while (loc > 0)
+			{
+				current = stack[--loc];
+				yield return new KeyValuePair<TKey, TValue>(current.Key, current.Value);
+
+				current = current.Right;
+				FillStack(stack, ref loc, current);
+			}
 		}
+
+		private void FillStack(Node[] stack, ref int index, Node current)
+		{
+			while (current != null)
+			{
+				stack[index++] = current;
+				current = current.Left;
+			}
+		}
+
+		//public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+		//{
+		//	var t = TransverseTree(_root);
+		//	while (t.MoveNext())
+		//		yield return t.Current;
+		//	t.Dispose();
+		//}
 
 		private IEnumerator<KeyValuePair<TKey, TValue>> TransverseTree(Node parent)
 		{
