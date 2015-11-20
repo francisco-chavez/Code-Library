@@ -15,13 +15,22 @@ namespace Unvi.DataStructures.Sets
 
 
 		#region Properties
+
 		/// <summary>
-		/// Returns the number of items in the set (a.k.a. the set's cardinality).
+		/// Gets the number of elements contained in the AVLTreeSet&lt;<typeparamref name="T"/>&gt;
 		/// </summary>
+		/// <typeparam name="T">
+		/// The element type of the Set.
+		/// </typeparam>
 		public int Count
 		{
 			get { return _count; }
 			private set { _count = value; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return false; }
 		}
 
 		/// <summary>
@@ -33,38 +42,36 @@ namespace Unvi.DataStructures.Sets
 			{
 				if (Count == 0)
 					return 0;
-				else
-					return _root.Height;
+				
+				return _root.Height;
 			}
 		}
 
-		public bool IsReadOnly {
-			get { return false; }
+		/// <summary>
+		/// Tells us if this set contains the specicified item.
+		/// </summary>
+		public bool this[T item]
+		{
+			get { return this.Contains(item); }
 		}
 		#endregion
 
 
 		#region Constructors
-		public AVLTreeSet()
+		public AVLTreeSet() : this(null) { }
+
+		public AVLTreeSet(IEnumerable<T> collection)
 		{
-			_root = null;
-			Count = 0;
+			_count	= 0;
+			_root	= null;
+
+			if (collection == null)
+				return;
+
+			foreach (T item in collection)
+				this.Add(item);
 		}
 
-		public AVLTreeSet(IEnumerable<T> values)
-			: this()
-		{
-			if (values != null)
-			{
-				foreach(T val in values)
-					this.Add(val);
-			}
-		}
-
-		/// <summary>
-		/// Destructor for AVLTreeSet. This isn't really needed, but it should break
-		/// the tree down a bit faster making it easier on the GC.
-		/// </summary>
 		~AVLTreeSet()
 		{
 			Clear();
@@ -73,30 +80,38 @@ namespace Unvi.DataStructures.Sets
 
 
 		#region Public Methods
-
-		#region Set Manipulation
 		/// <summary>
-		/// Adds the given value to the set if it isn't already present.
+		/// Adds an element to the current set and returns a value to indicate if the
+		/// element was successfully added.
 		/// </summary>
-		public bool Add(T value)
+		/// <param name="item">
+		/// The element to add to the set.
+		/// </param>
+		/// <returns>
+		/// True if the element is added to the set; False if the element is already
+		/// int the set.
+		/// </returns>
+		public bool Add(T item)
 		{
-			// Null is not a valid value
-			if (value == null)
+			if (IsReadOnly)
+				throw new NotSupportedException("Adding items to a read-only Set is not supported");
+
+			if (item == null)
 				return false;
 
-			// The value is already present
-			if (Contains(value))
+			if (Contains(item))
 				return false;
 
+			// Base Case
 			if (_root == null)
 			{
-				_root = new Node(value);
+				_root = new Node(item);
 				Count++;
 				return true;
 			}
 
-			var parent = GetParentNode(value);
-			var newNode = new Node(value) { Parent = parent };
+			var parent  = GetParentNode(item);
+			var newNode = new Node(item) { Parent = parent };
 
 			if (newNode.Data.CompareTo(parent.Data) < 0)
 				parent.Left = newNode;
@@ -106,23 +121,34 @@ namespace Unvi.DataStructures.Sets
 			Count++;
 			RebalanceTree(newNode);
 			return true;
-		}
-
-		void ICollection<T>.Add(T item) {
-			Add(item);
-		}
+		}	// End +Add(item: T): bool
 
 		/// <summary>
-		/// Removes the given value from the set if it is present.
+		/// Removes an element from the current set and returns a value to indicate if the
+		/// element was successfully added.
 		/// </summary>
-		public bool Remove(T value)
+		/// <param name="item">
+		/// The element to remove from the set.
+		/// </param>
+		/// <returns>
+		/// True if the element is removed from the set; False if the element wasn't in the
+		/// set.
+		/// </returns>
+		public bool Remove(T item)
 		{
-			if (value == null)
+			if (IsReadOnly)
+				throw new NotSupportedException("Removing items from a read-only Set is not supported.");
+
+			// We don't store null values.
+			if (item == null)
 				return false;
 
-			if (!Contains(value))
+			// There was no item to remove.
+			if (!Contains(item))
 				return false;
 
+			// Base case.
+			// The value removed was the only value in the tree.
 			if (Count == 1)
 			{
 				_root = null;
@@ -130,22 +156,31 @@ namespace Unvi.DataStructures.Sets
 				return true;
 			}
 
-			Node parent = GetParentNode(value);
+			Node parent = GetParentNode(item);
 			Node node = null;
 			Node replacement = null;
 
+			///
+			/// Find node to remove
+			///
 			if (parent == null)
 				node = _root;
 			else
-				node = value.CompareTo(parent.Data) < 0 ? parent.Left : parent.Right;
+				node = item.CompareTo(parent.Data) < 0 ? parent.Left : parent.Right;
 
+			///
+			/// Find a node in the tree that can take up the position of the
+			/// node that is being removed.
+			/// 
+
+			// Edge Case: The node being removed has no left children
 			if (node.Left == null)
 			{
 				replacement = node.Right;
 
 				if (parent == null)
 					_root = replacement;
-				else if (value.CompareTo(parent.Data) < 0)
+				else if (item.CompareTo(parent.Data) < 0)
 					parent.Left = replacement;
 				else
 					parent.Right = replacement;
@@ -161,10 +196,16 @@ namespace Unvi.DataStructures.Sets
 				return true;
 			}
 
+			// Find the right-most (largest valued) child in the left subtree
+			// of the node that will be removed.
 			replacement = node.Left;
 			while (replacement.Right != null)
 				replacement = replacement.Right;
 
+			///
+			/// More the replacement node into the tree location of the node
+			/// that is being replaced.
+			///
 			Node rebalancePoint;
 			if (replacement == node.Left)
 			{
@@ -194,233 +235,398 @@ namespace Unvi.DataStructures.Sets
 				parent.Right = replacement;
 			replacement.Parent = parent;
 
+			///
+			/// Clear out any refereances the that the removed node has to
+			/// the tree. We don't really need to this, but it will be helpfull
+			/// if we decide implement a Node Pool to pull new Nodes from.
+			///
 			node.Left = null;
 			node.Right = null;
 			node.Parent = null;
 			Count--;
 
+			///
+			/// Rebalance the tree. This will also update the height of the replacement node
+			/// because it will be in the rebalance path.
+			/// 
 			RebalanceTree(rebalancePoint);
 			return true;
-		}
+		}	// End +Remove(item: T): bool
 
 		/// <summary>
-		/// Tells us if the given value is present in the set.
-		/// </summary>
-		public bool Contains(T value)
-		{
-			if (Count == 0)
-				return false;
-
-			var parent = GetParentNode(value);
-
-			if (parent == null)
-				return EqualityComparer<T>.Default.Equals(value, _root.Data);
-
-			var node = value.CompareTo(parent.Data) < 0 ? parent.Left : parent.Right;
-			if (node == null)
-				return false;
-			return EqualityComparer<T>.Default.Equals(value, node.Data);
-		}
-
-		/// <summary>
-		/// Clears out all values from the set.
+		/// Removes all items from the AVLTreeSet&lt;<paramref name="T"/>&gt;.
 		/// </summary>
 		public void Clear()
 		{
 			Clear(_root);
 			_root = null;
 			Count = 0;
-		}
-		#endregion
+		}	// End +Clear()
 
 
-		#region Set Meta Data
 		/// <summary>
-		/// Tells us if the current set is a subset of the other set. { this } &#8838; { other }
+		/// Determines whether the AVLTreeSet&lt;<typeparamref name="T"/>&gt; contains a specific value.
 		/// </summary>
-		public bool IsSubsetOf(IEnumerable<T> other) {
-			if (other == null)
+		/// <param name="item">
+		/// The object to locate in the AVLTreeSet&lt;<typeparamref name="T"/>&gt;.
+		/// </param>
+		/// <returns>
+		/// True if item is found in the AVLTreeSet&lt;<typeparamref name="T"/>&gt;; otherwise, False.
+		/// </returns>
+		public bool Contains(T item)
+		{
+			if (Count == 0)
 				return false;
 
-			var otherSet = other as AVLTreeSet<T>;
-			if (otherSet == null)
-				otherSet = new AVLTreeSet<T>(other);
+			var parent = GetParentNode(item);
 
-			if (this == otherSet)
+			if (parent == null)
+				return EqualityComparer<T>.Default.Equals(item, _root.Data);
+
+			var node = item.CompareTo(parent.Data) < 0 ? parent.Left : parent.Right;
+			if (node == null)
+				return false;
+			
+			return EqualityComparer<T>.Default.Equals(item, node.Data);
+		}	// +Contains(item: T): bool
+
+		/// <summary>
+		/// Determines whether the current set overlaps with the specified collection.
+		/// </summary>
+		/// <param name="other">The collection t compare to the current set.</param>
+		/// <returns>
+		/// True if the current set and other share at least one common element; otherwise,
+		/// False.
+		/// </returns>
+		public bool Overlaps(IEnumerable<T> other)
+		{
+			if (other == null)
+				throw new ArgumentNullException();
+
+			if (Object.ReferenceEquals(this, other))
 				return true;
 
-			if (this.Count > otherSet.Count)
+			foreach (var item in other)
+				if (this.Contains(item))
+					return true;
+
+			return false;
+		}	// End +Overlaps(other: IEnumerable<T>): bool
+
+		/// <summary>
+		/// Determines whether the current set and the specified collection contain the
+		/// same elements.
+		/// </summary>
+		/// <param name="other">The collection to compare to the current set.</param>
+		/// <returns>True if the current set is equal to other; otherwise, False.</returns>
+		public bool SetEquals(IEnumerable<T> other)
+		{
+			if (other == null)
+				throw new ArgumentNullException();
+
+			//
+			// I could do "return this.IsSuperset(other) && this.IsSubset(other)" but this
+			// is a bit faster codewise.
+			// -FCT
+			//
+
+			int count = 0;
+			foreach (T item in other)
+			{
+				if (!this.Contains(item))
+					return false;
+
+				count++;
+			}
+
+			return count == Count;
+		}	// End +SetEquals(otheer: IEnumerable<T>): bool
+
+		/// <summary>
+		/// Returns an enumerator that iterates through the collection.
+		/// </summary>
+		/// <returns>
+		/// Returns an IEnumerator&lt;<paramref name="T"/>&gt; that can be used to iterate through
+		/// the collection.
+		/// </returns>
+		public IEnumerator<T> GetEnumerator()
+		{
+			if (_root == null)
+				yield break;
+
+			var stack = new Node[Height];
+			int loc = 0;
+			var current = _root;
+
+			FillStack(stack, ref loc, current);
+			while (loc > 0)
+			{
+				current = stack[--loc];
+				yield return current.Data;
+
+				current = current.Right;
+				FillStack(stack, ref loc, current);
+			}
+		}	// +End GetEnumerator(): IEnumerator<T>
+
+		/// <summary>
+		/// Copies the elements of the AVLTreeSet&lt;<typeparamref name="T"/>&gt; to an Array,
+		/// starting at a particular Array index.
+		/// </summary>
+		/// <param name="array">
+		/// The one-dimensional Array that is the destination of the elements
+		/// copied from the AVLTreeSet&lt;<typeparamref name="T"/>&gt;. The Array must
+		/// have zero-based indexing.
+		/// </param>
+		/// <param name="arrayIndex">
+		/// The zero-based index in array at which copying begins.
+		/// </param>
+		public void CopyTo(T[] array, int arrayIndex)
+		{
+			// We could get away with only putting in what fits, but the interface we're using states
+			// that we should throw an exception if there isn't enough space in the array.
+			if (array.Length - arrayIndex <= this.Count)
+				throw new ArgumentException("The number of items in the AVLTreeSet<T> is greater than the available space in the array.");
+
+			using (var enumerator = this.GetEnumerator())
+			{
+				for (int i = arrayIndex; i < array.Length && enumerator.MoveNext(); i++)
+					array[i] = enumerator.Current;
+			}
+		}	// +CopyTo(array: T[], arrayIndex: int)
+
+
+		/// <summary>
+		/// Determines whether the current set is a proper (strict) subset of a specified
+		/// collection.
+		/// </summary>
+		/// <param name="other">The collection to compare the current set.</param>
+		/// <returns>True if the current set is a proper subset of other; otherwise, false.</returns>
+		public bool IsProperSubsetOf(IEnumerable<T> other)
+		{
+			if (other == null)
+				throw new ArgumentNullException();
+
+			if (Object.ReferenceEquals(this, other))
 				return false;
-			foreach (var value in this)
-				if (!otherSet.Contains(value))
+
+			var otherSet = other as ISet<T> ?? new AVLTreeSet<T>(other);
+
+			if (this.Count >= otherSet.Count)
+				return false;
+			return IsSubsetOf(otherSet);
+		}	// End +IsProperSubsetOf(other: IEnumerable<T>): bool
+
+		/// <summary>
+		/// Determines whether a set is a subset of a specified collection.
+		/// </summary>
+		/// <param name="other">The collection to compare to the current set.</param>
+		/// <returns>True if the current set is a subset of other; otherwise, False.</returns>
+		public bool IsSubsetOf(IEnumerable<T> other)
+		{
+			if (other == null)
+				throw new ArgumentNullException();
+
+			if (Object.ReferenceEquals(this, other))
+				return true;
+
+			var otherSet = other as ISet<T> ?? new AVLTreeSet<T>(other);
+			
+			return IsSubsetOf(otherSet);
+		}	// End +IsSubsetOf(other: IEnumerable<T>): bool
+
+		/// <summary>
+		/// Determines whether the currsent set is a proper (strict) superset of a specified
+		/// collection.
+		/// </summary>
+		/// <param name="other">The collection to compare to the current set.</param>
+		/// <returns>True if the current set is a proper superset of other; otherwise, False.</returns>
+		public bool IsProperSupersetOf(IEnumerable<T> other)
+		{
+			if (other == null)
+				throw new ArgumentNullException();
+
+			if (Object.ReferenceEquals(this, other))
+				return false;
+
+			int count = 0;
+			foreach (var item in other)
+			{
+				if (!this.Contains(item))
+					return false;
+
+				count++;
+			}
+
+			return (Count < this.Count);
+		}	// End +IsProperSupersetOf(other: IEnumerable<T>): bool
+
+		/// <summary>
+		/// Determines whether the current set is a superset of a specified collection.
+		/// </summary>
+		/// <param name="other">The collection to compare to the current set.</param>
+		/// <returns>True if the current set is a superset of other; otherwise, false.</returns>
+		public bool IsSupersetOf(IEnumerable<T> other)
+		{
+			if (other == null)
+				throw new ArgumentNullException();
+
+			if (Object.ReferenceEquals(this, other))
+				return true;
+
+			foreach (var item in other)
+				if (!this.Contains(item))
 					return false;
 
 			return true;
-		}
+		}	// End +IsSupersetOf(other: IEnumerable<T>): other
+
 
 		/// <summary>
-		/// Tells us if the current set is a superset of the other set. { this } &#8839; { other }
+		/// Removes all elements in the specified collection from the current set.
 		/// </summary>
-		public bool IsSupersetOf(ISet<T> otherSet)
+		/// <param name="other">The collection of items to remove from the set.</param>
+		public void ExceptWith(IEnumerable<T> other)
 		{
-			if (otherSet == null)
-				return true;
-			return otherSet.IsSubsetOf(this);
-		}
+			if (other == null)
+				throw new ArgumentNullException();
+
+			if (Object.ReferenceEquals(this, other))
+			{
+				this.Clear();
+				return;
+			}
+
+			foreach (var item in other)
+				this.Remove(item);
+		}	// End +ExceptWith(other: IEnumerable<T>)
 
 		/// <summary>
-		/// Tells us if the current set is a proper subset of the other set. { this } &#8834; { other }
+		/// Modifies the current set so that it contains only elements that are also
+		/// in a specified collection.
 		/// </summary>
-		/// <remarks>
-		/// A proper subset is a subset that is not equal to the other set.
-		/// </remarks>
-		public bool IsProperSubsetOf(ISet<T> otherSet)
+		/// <param name="other">The collection to compare to the current set.</param>
+		public void IntersectWith(IEnumerable<T> other)
 		{
-			if(otherSet == null)
-				return false;
+			if (other == null)
+				throw new ArgumentNullException();
 
-			if(this.Count >= otherSet.Count)
-				return false;
-			
-			return this.IsSubsetOf(otherSet);
-		}
+			if (Object.ReferenceEquals(this, other))
+				return;
+
+			ISet<T> otherSet = other as ISet<T> ?? new AVLTreeSet<T>(other);
+			T[] array = new T[this.Count];
+			this.CopyTo(array, 0);
+			foreach (var item in array)
+				if (!otherSet.Contains(item))
+					this.Remove(item);
+		}	// End +IntersectWith(other: IEnumerable<T>)
 
 		/// <summary>
-		/// Tells us if the current set is a proper superset of the other set. { this } &#8835; { other }
+		/// Modifies the current set so that it contains all elements that are present
+		/// in either the current set or the specified collection.
 		/// </summary>
-		/// <remarks>
-		/// A proper super set is a superset that is not equal to the other set. 
-		/// </remarks>
-		public bool IsProperSupersetOf(ISet<T> otherSet)
+		/// <param name="other">The collection to compare to the current set.</param>
+		public void UnionWith(IEnumerable<T> other)
 		{
-			if(otherSet == null)
-				return true;
-			if(this.Count <= otherSet.Count)
-				return false;
+			if (other == null)
+				throw new ArgumentNullException();
 
-			return this.IsSupersetOf(otherSet);
-		}
+			if (Object.ReferenceEquals(this, other))
+				return;
+
+			foreach (var item in other)
+				this.Add(item);
+		}	// End +UnionWith(other: IEnumerable<T>);
+
+		/// <summary>
+		/// Removes all elements in the specified collection from the current set.
+		/// </summary>
+		/// <param name="other">The collection of items to remove from the set.</param>
+		public void SymmetricExceptWith(IEnumerable<T> other)
+		{
+			if (other == null)
+				throw new ArgumentNullException();
+
+			if (Object.ReferenceEquals(this, other))
+			{
+				this.Clear();
+				return;
+			}
+
+			foreach (var item in other)
+				this.Remove(item);
+		}	// End +SymmetricExceptWith(other: IEnumerable<T>)
 		#endregion
 
 
-		#region Set Creation
+		#region ???
 		/// <summary>
-		/// Returns a new set containing the intersection of this set and the other set. { this } &#8745; { other }
+		/// Returns an enumerator that iterates through the collection.
 		/// </summary>
-		public ISet<T> Intersection(ISet<T> otherSet)
-		{
-			if (otherSet == null || this.Count == 0 || otherSet.Count == 0)
-				return new AVLTreeSet<T>();
-
-			ISet<T> big = this;
-			ISet<T> small = otherSet;
-
-			if (small.Count > big.Count)
-			{
-				big = otherSet;
-				small = this;
-			}
-
-			var result = new AVLTreeSet<T>();
-
-			foreach (T value in small)
-				if (big.Contains(value))
-					result.Add(value);
-
-			return result;
-		}
-
-		/// <summary>
-		/// Returns a new set containing the union of this set and the other set. { this } &#8746; { other }
-		/// </summary>
-		public ISet<T> Union(ISet<T> otherSet)
-		{
-			var result = new AVLTreeSet<T>(this);
-
-			if (otherSet == null)
-				return result;
-
-			foreach (T val in otherSet)
-				result.Add(val);
-
-			return result;
-		}
-
-		/// <summary>
-		/// Returns a new set containing the complement of the other set in this set. In other words,
-		/// it returns this set minus the other set. { this } &#8722; { other }
-		/// </summary>
-		public ISet<T> Complement(ISet<T> otherSet)
-		{
-			var result = new AVLTreeSet<T>(this);
-
-			if (otherSet == null)
-				return result;
-
-			foreach (var val in otherSet)
-				result.Remove(val);     // We don't need to worry about value not being there
-										// because the remove method will check that for us.
-
-			return result;
-		}
-
-		///// <summary>
-		///// Returns a new set containing the symmetric difference of this set and the other
-		///// set. This is the complement of the intersection of both sets in the union of 
-		///// both sets.  (A &#8746; B) &#8722; (A &#8745; B)
-		///// </summary>
-		//public ISet<T> SymmetricDifference(ISet<T> otherSet)
-		//{
-		//	if (otherSet == null)
-		//		return new AVLTreeSet<T>(this);
-
-		//	var union = this.Union(otherSet);
-		//	var intersection = this.Intersection(otherSet);
-
-		//	return union.Complement(intersection);
-		//}
-		#endregion
-
-
-		public IEnumerator<T> GetEnumerator()
-		{
-			/// Todo: Rewrite this to use a stack instead of a set.
-			AVLTreeSet<T> painted = new AVLTreeSet<T>();
-
-			var current = _root;
-
-			while (current != null)
-			{
-				if (current.Left != null && !painted.Contains(current.Left.Data))
-				{
-					current = current.Left;
-				}
-				else if (!painted.Contains(current.Data))
-				{
-					painted.Add(current.Data);
-					yield return current.Data;
-				}
-				else if (current.Right != null && !painted.Contains(current.Right.Data))
-				{
-					current = current.Right;
-				}
-				else
-				{
-					current = current.Parent;
-				}
-			}
-
-			painted.Clear();
-		}
-
+		/// <returns>
+		/// Returns an IEnumerator that can be used to iterate through
+		/// the collection.
+		/// </returns>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return this.GetEnumerator();
-		}
+		}	// End IEnumerable.GetEnumerator(): IEnumerator
+
+		/// <summary>
+		/// Adds an element to the current set and returns a value to indicate if the
+		/// element was successfully added.
+		/// </summary>
+		/// <param name="item">
+		/// The element to add to the set.
+		/// </param>
+		void ICollection<T>.Add(T item)
+		{
+			this.Add(item);
+		}	// End ICollection<T>.Add(item: T)
 		#endregion
 
 
 		#region Helper Methods
+		/// <summary>
+		/// Tells us if this object is a subset of other.
+		/// </summary>
+		/// <param name="other">Is an object that implements ISet&lt<typeparamref name="T"/>&gt;.</param>
+		private bool IsSubsetOf(ISet<T> other)
+		{
+			if (this.Count > other.Count)
+				return false;
+
+			foreach (var item in this)
+				if (!other.Contains(item))
+					return false;
+
+			return true;
+		}	// End -IsSubsetOf(other: ISet<T>): bool
+
+		/// <summary>
+		/// This method is used to fill in the stack that is being used it enumerate 
+		/// over the collection.
+		/// </summary>
+		/// <param name="stack">
+		/// This is the stack on which we place items.
+		/// </param>
+		/// <param name="index">
+		/// The location on which the next item in the stack will be placed.
+		/// </param>
+		/// <param name="current">
+		/// The current item to be placed on the stack. It's also the starting point 
+		/// on which to place the next items.
+		/// </param>
+		private void FillStack(Node[] stack, ref int index, Node current)
+		{
+			while (current != null)
+			{
+				stack[index++] = current;
+				current = current.Left;
+			}
+		}	// End -FillStack(stack: Node[], index: in-out int, current: Node)
+
 		/// <summary>
 		/// Find a reference to the node that should be the parent to the node containing
 		/// the given value. If there is no node containing the current value, return the
@@ -450,10 +656,22 @@ namespace Unvi.DataStructures.Sets
 			}
 
 			return parent;
-		}
+		}	// End -GetParentNode(value: T) : Node
 
+		/// <summary>
+		/// Starting from the given Node, this method will move up the tree. As it moves
+		/// up the tree, it will rotate tree nodes to make sure the tree is balanced within
+		/// the tolerance allowed in an AVL Tree.
+		/// </summary>
+		/// <param name="startingPoint">
+		/// The node were we start at when we re-balance the tree. This is usually locationed
+		/// at the location where the tree became unbalanced.
+		/// </param>
 		private void RebalanceTree(Node startingPoint)
 		{
+			if (startingPoint == null)
+				return;
+
 			// Move up the tree while rotating nodes to keep things balanced.
 			var current = startingPoint;
 			while (current != null)
@@ -475,14 +693,29 @@ namespace Unvi.DataStructures.Sets
 				{
 					// Insure we have a left-left case before we rotate the 
 					// current node to the right.
-					if(current.Left.Balance < 0)
+					if (current.Left.Balance < 0)
 						RotateLeft(current.Left);
 					current = RotateRight(current);
 				}
 				current = current.Parent;
 			}
-		}
 
+			// TODO: There's an edge case I need to look into before I know that this won't
+			//		 be needed.
+			_root.UpdateHeight();
+		}	// End -RebalanceTree(startingPoint: Node)
+
+		/// <summary>
+		/// This method will take the given node and rotate it (counter-clockwise)
+		/// to the position of its left child. Since this is a rotation, the node's
+		/// right child will be moved to take the position that the given node held.
+		/// </summary>
+		/// <param name="node">
+		/// The node to be rotated out of its current parent position in the tree.
+		/// </param>
+		/// <returns>
+		/// The node that replaced the given node's tree position. Its right child.
+		/// </returns>
 		private Node RotateLeft(Node node)
 		{
 			var newCurrent = node.Right;
@@ -519,8 +752,19 @@ namespace Unvi.DataStructures.Sets
 			//	newCurrent.Parent.UpdateHeight();
 
 			return newCurrent;
-		}
+		}	// End -RotateLeft(node: Node): Node
 
+		/// <summary>
+		/// This method will take the given node and rotate it (clockwise) to the 
+		/// position of its left child. Since this is a rotation, the node's right 
+		/// child will be moved to take the position that the given node held.
+		/// </summary>
+		/// <param name="node">
+		/// The node to be rotated out of its current parent position in the tree.
+		/// </param>
+		/// <returns>
+		/// The node that replaced the given node's tree position. Its left child.
+		/// </returns>
 		private Node RotateRight(Node node)
 		{
 			// This is the node that will be taking the
@@ -553,16 +797,16 @@ namespace Unvi.DataStructures.Sets
 			// these nodes is critical.
 			node.UpdateHeight();                    // This node had a change in children
 			newCurrent.UpdateHeight();              // This node had a change in children
-													//if (newCurrent != _root)
-													//	newCurrent.Parent.UpdateHeight();	// This node had a change in children
+			//if (newCurrent != _root)
+			//	newCurrent.Parent.UpdateHeight();	// This node had a change in children
 
 			// Return the node that has the tree location of
 			// the node that was rotated out of the given position.
 			return newCurrent;
-		}
+		}	// End -RotateLeft(node: Node): Node
 
 		/// <summary>
-		/// Recursive method for clearning the a tree using pre-order DFS.
+		/// Recursive method for clearning the tree using a pre-ordered DFS.
 		/// </summary>
 		private void Clear(Node n)
 		{
@@ -572,50 +816,10 @@ namespace Unvi.DataStructures.Sets
 			Clear(n.Left);
 			Clear(n.Right);
 
-			n.Left = null;
-			n.Right = null;
+			n.Left   = null;
+			n.Right  = null;
 			n.Parent = null;
-		}
-
-		public void UnionWith(IEnumerable<T> other) {
-			throw new NotImplementedException();
-		}
-
-		public void IntersectWith(IEnumerable<T> other) {
-			throw new NotImplementedException();
-		}
-
-		public void ExceptWith(IEnumerable<T> other) {
-			throw new NotImplementedException();
-		}
-
-		public void SymmetricExceptWith(IEnumerable<T> other) {
-			throw new NotImplementedException();
-		}
-
-		public bool IsSupersetOf(IEnumerable<T> other) {
-			throw new NotImplementedException();
-		}
-
-		public bool IsProperSupersetOf(IEnumerable<T> other) {
-			throw new NotImplementedException();
-		}
-
-		public bool IsProperSubsetOf(IEnumerable<T> other) {
-			throw new NotImplementedException();
-		}
-
-		public bool Overlaps(IEnumerable<T> other) {
-			throw new NotImplementedException();
-		}
-
-		public bool SetEquals(IEnumerable<T> other) {
-			throw new NotImplementedException();
-		}
-
-		public void CopyTo(T[] array, int arrayIndex) {
-			throw new NotImplementedException();
-		}
+		}	// End -Clear(n: Node)
 		#endregion
 
 
@@ -627,10 +831,10 @@ namespace Unvi.DataStructures.Sets
 			public Node Left	{ get; set; }
 			public Node Right	{ get; set; }
 
-			public T	Data	{ get; set; }
+			public T Data		{ get; set; }
 
-			public int	Height	{ get; private set; }
-			public int	Balance
+			public int Height	{ get; private set; }
+			public int Balance
 			{
 				get
 				{
@@ -664,7 +868,7 @@ namespace Unvi.DataStructures.Sets
 			#region Public Methods
 			public void UpdateHeight()
 			{
-				int leftHeight = Left != null ? Left.Height : 0;
+				int leftHeight  = Left  != null ? Left.Height  : 0;
 				int rightHeight = Right != null ? Right.Height : 0;
 
 				Height = 1 + Math.Max(leftHeight, rightHeight);
