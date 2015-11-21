@@ -76,7 +76,7 @@ namespace Unvi.DataStructures.Dictionaries
 		#endregion
 
 
-		#region Methods
+		#region Public Methods
 
 		/// <summary>
 		/// Adds an element with the provided key and value to the AVLTreeDictionary&lt;Tkey, TValue&gt;.
@@ -185,6 +185,33 @@ namespace Unvi.DataStructures.Dictionaries
 			_root = null;
 			Count = 0;
 		}	// End +Clear()
+
+		/// <summary>
+		/// Determines whether the AVLTreeDictionary&lt;TKey, TValue&gt;
+		/// contains an element with the specified key.
+		/// </summary>
+		/// <param name="key">The key to locate in the AVLTreeDictionary&lt;TKey, TValue&gt;.</param>
+		/// <returns>
+		/// True if the AVLTreeDictionary&lt;TKey, TValue&gt; contains an element with the key;
+		/// otherwise, False.
+		/// </returns>
+		public bool ContainsKey(TKey key)
+		{
+			if (key == null)
+				throw new ArgumentNullException("key", "key is null.");
+
+			if (Count == 0)
+				return false;
+
+			var parent = GetParent(key);
+
+			if (parent == null)
+				return key.CompareTo(_root.Key) == 0;
+
+			var node = key.CompareTo(parent.Key) < 0 ? parent.Left : parent.Right;
+
+			return node != null;
+		}	// End +ContainsKey(key: TKey): bool
 
 		#endregion
 
@@ -434,11 +461,6 @@ namespace Unvi.DataStructures.Dictionaries
 		#endregion
 
 
-		public bool ContainsKey(TKey key)
-		{
-			throw new NotImplementedException();
-		}
-
 		public ICollection<TKey> Keys
 		{
 			get { throw new NotImplementedException(); }
@@ -482,27 +504,6 @@ namespace Unvi.DataStructures.Dictionaries
 
 
 		//#region Public Methods
-
-		///// <summary>
-		///// Checks to see if there's an entry under the given key.
-		///// </summary>
-		//public bool ContainsKey(TKey key)
-		//{
-		//	if(key == null)
-		//		return false;
-
-		//	if (Count == 0)
-		//		return false;
-
-		//	var parent = GetParent(key);
-
-		//	if (parent == null)
-		//		return _root.Key.CompareTo(key) == 0;
-
-		//	var node = key.CompareTo(parent.Key) < 0 ? parent.Left : parent.Right;
-
-		//	return node != null;
-		//}
 
 		//public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
 		//{
