@@ -16,6 +16,9 @@ namespace Unvi.DataStructures.Dictionaries
 
 
 		#region Properties
+
+		public bool IsReadOnly { get { return false; } }
+
 		public int Count { get; private set; }
 
 		/// <summary>
@@ -213,10 +216,73 @@ namespace Unvi.DataStructures.Dictionaries
 			return node != null;
 		}	// End +ContainsKey(key: TKey): bool
 
+		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+		{
+			if (_root == null)
+				yield break;
+
+			var stack = new Node[_root.Height];
+			int loc = 0;
+			var current = _root;
+
+			FillStack(stack, ref loc, current);
+
+			while (loc > 0)
+			{
+				current = stack[--loc];
+				yield return new KeyValuePair<TKey, TValue>(current.Key, current.Value);
+
+				current = current.Right;
+				FillStack(stack, ref loc, current);
+			}
+		}	// End +GetEnumerator(): IEnumerator<KeyValuePair<TKey, TValue>>
+
+		/// <summary>
+		/// Copies the elements of the IDictionary to an Array, starting at a particular index.
+		/// </summary>
+		/// <param name="array">
+		/// The one-dimensional Array that is the destination of the elements
+		/// copied from the IDictionary. The Array must have zero-based indexing.
+		/// </param>
+		/// <param name="arrayIndex">
+		/// The zero-based index in array at which copying begins.
+		/// </param>
+		public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+		{
+			if (array == null)
+				throw new ArgumentNullException("array");
+
+			if (arrayIndex < 0)
+				throw new ArgumentOutOfRangeException("arrayIndex");
+
+			if (array.Length - arrayIndex < this.Count)
+				throw new ArgumentException("The number of elements in the Dictionary is greater than the available space in the array.");
+
+			using (var ittor = this.GetEnumerator())
+			{
+				for (int i = arrayIndex; ittor.MoveNext(); i++)
+					array[i] = ittor.Current;
+			}
+		}	// End +CopyTo(array: KeyValuePair<Tkey, TValue>[], arrayIndex: int)
+
 		#endregion
 
 
 		#region Helper Methods
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this.GetEnumerator();
+		}
+
+		private void FillStack(Node[] stack, ref int index, Node current)
+		{
+			while (current != null)
+			{
+				stack[index++] = current;
+				current = current.Left;
+			}
+		}
 
 		/// <summary>
 		/// Returns the parent node of the node that would contain the given 
@@ -460,17 +526,49 @@ namespace Unvi.DataStructures.Dictionaries
 		}	// End -Clear(node: Node)
 		#endregion
 
-
+		// Summary:
+		//     Gets an System.Collections.Generic.ICollection<T> containing the keys of
+		//     the System.Collections.Generic.IDictionary<TKey,TValue>.
+		//
+		// Returns:
+		//     An System.Collections.Generic.ICollection<T> containing the keys of the object
+		//     that implements System.Collections.Generic.IDictionary<TKey,TValue>.
 		public ICollection<TKey> Keys
 		{
 			get { throw new NotImplementedException(); }
 		}
 
+		// Summary:
+		//     Gets the value associated with the specified key.
+		//
+		// Parameters:
+		//   key:
+		//     The key whose value to get.
+		//
+		//   value:
+		//     When this method returns, the value associated with the specified key, if
+		//     the key is found; otherwise, the default value for the type of the value
+		//     parameter. This parameter is passed uninitialized.
+		//
+		// Returns:
+		//     true if the object that implements System.Collections.Generic.IDictionary<TKey,TValue>
+		//     contains an element with the specified key; otherwise, false.
+		//
+		// Exceptions:
+		//   System.ArgumentNullException:
+		//     key is null.
 		public bool TryGetValue(TKey key, out TValue value)
 		{
 			throw new NotImplementedException();
 		}
 
+		// Summary:
+		//     Gets an System.Collections.Generic.ICollection<T> containing the values in
+		//     the System.Collections.Generic.IDictionary<TKey,TValue>.
+		//
+		// Returns:
+		//     An System.Collections.Generic.ICollection<T> containing the values in the
+		//     object that implements System.Collections.Generic.IDictionary<TKey,TValue>.
 		public ICollection<TValue> Values
 		{
 			get { throw new NotImplementedException(); }
@@ -480,67 +578,6 @@ namespace Unvi.DataStructures.Dictionaries
 		{
 			throw new NotImplementedException();
 		}
-
-		public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool IsReadOnly
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
-		{
-			throw new NotImplementedException();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			throw new NotImplementedException();
-		}
-
-
-
-		//#region Public Methods
-
-		//public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
-		//{
-		//	if (_root == null)
-		//		yield break;
-
-		//	var stack = new Node[_root.Height];
-		//	int loc = 0;
-		//	var current = _root;
-
-		//	FillStack(stack, ref loc, current);
-
-		//	while (loc > 0)
-		//	{
-		//		current = stack[--loc];
-		//		yield return new KeyValuePair<TKey, TValue>(current.Key, current.Value);
-
-		//		current = current.Right;
-		//		FillStack(stack, ref loc, current);
-		//	}
-		//}
-
-		//private void FillStack(Node[] stack, ref int index, Node current)
-		//{
-		//	while (current != null)
-		//	{
-		//		stack[index++] = current;
-		//		current = current.Left;
-		//	}
-		//}
-
-		//IEnumerator IEnumerable.GetEnumerator()
-		//{
-		//	return this.GetEnumerator();
-		//}
-		//#endregion
-
 
 		#region Helper Classes
 		private class Node
