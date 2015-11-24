@@ -62,6 +62,30 @@ namespace Unvi.DataStructures.Dictionaries
 			}	// End set
 		}	// End [] property.
 
+		// Summary:
+		//     Gets an System.Collections.Generic.ICollection<T> containing the keys of
+		//     the System.Collections.Generic.IDictionary<TKey,TValue>.
+		//
+		// Returns:
+		//     An System.Collections.Generic.ICollection<T> containing the keys of the object
+		//     that implements System.Collections.Generic.IDictionary<TKey,TValue>.
+		public ICollection<TKey> Keys
+		{
+			get { throw new NotImplementedException(); }
+		}	// End Keys Property
+
+		// Summary:
+		//     Gets an System.Collections.Generic.ICollection<T> containing the values in
+		//     the System.Collections.Generic.IDictionary<TKey,TValue>.
+		//
+		// Returns:
+		//     An System.Collections.Generic.ICollection<T> containing the values in the
+		//     object that implements System.Collections.Generic.IDictionary<TKey,TValue>.
+		public ICollection<TValue> Values
+		{
+			get { throw new NotImplementedException(); }
+		}	// End Values Property
+
 		#endregion
 
 
@@ -189,6 +213,7 @@ namespace Unvi.DataStructures.Dictionaries
 			Count = 0;
 		}	// End +Clear()
 
+
 		/// <summary>
 		/// Determines whether the AVLTreeDictionary&lt;TKey, TValue&gt;
 		/// contains an element with the specified key.
@@ -215,6 +240,47 @@ namespace Unvi.DataStructures.Dictionaries
 
 			return node != null;
 		}	// End +ContainsKey(key: TKey): bool
+	
+		/// <summary>
+		/// This method will tell us if there is an entry with this key-value pairing in
+		/// the dictionary.
+		/// </summary>
+		public bool Contains(KeyValuePair<TKey, TValue> item)
+		{
+			if (!ContainsKey(item.Key))
+				return false;
+
+			return EqualityComparer<TValue>.Default.Equals(item.Value, this[item.Key]);
+		}	// End +Contains(item, KeyValuePair<TKey, TValue>): bool
+
+
+		/// <summary>
+		/// Gets the value associated with the specified key.
+		/// </summary>
+		/// <param name="key">The key whose value to get.</param>
+		/// <param name="value">
+		/// When this method returns, the value associated with the specified key, if
+		/// the key is found; otherwise, the default value for the type of the value 
+		/// parameter. This parameter is passed uninitiaized.
+		/// </param>
+		/// <returns>
+		/// True if the object that implements IDictionary&lt;TKey, TValue&gt;
+		/// contsin an element with the specified key; otherwise, false.
+		/// </returns>
+		public bool TryGetValue(TKey key, out TValue value)
+		{
+			if (key == null)
+				throw new ArgumentNullException("key");
+
+			if (!ContainsKey(key))
+			{
+				value = default(TValue);
+				return false;
+			}
+
+			value = this[key];
+			return true;
+		}	// End +TryGetValue(key: TKey, out value: TValue): bool
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
 		{
@@ -526,58 +592,6 @@ namespace Unvi.DataStructures.Dictionaries
 		}	// End -Clear(node: Node)
 		#endregion
 
-		// Summary:
-		//     Gets an System.Collections.Generic.ICollection<T> containing the keys of
-		//     the System.Collections.Generic.IDictionary<TKey,TValue>.
-		//
-		// Returns:
-		//     An System.Collections.Generic.ICollection<T> containing the keys of the object
-		//     that implements System.Collections.Generic.IDictionary<TKey,TValue>.
-		public ICollection<TKey> Keys
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		// Summary:
-		//     Gets the value associated with the specified key.
-		//
-		// Parameters:
-		//   key:
-		//     The key whose value to get.
-		//
-		//   value:
-		//     When this method returns, the value associated with the specified key, if
-		//     the key is found; otherwise, the default value for the type of the value
-		//     parameter. This parameter is passed uninitialized.
-		//
-		// Returns:
-		//     true if the object that implements System.Collections.Generic.IDictionary<TKey,TValue>
-		//     contains an element with the specified key; otherwise, false.
-		//
-		// Exceptions:
-		//   System.ArgumentNullException:
-		//     key is null.
-		public bool TryGetValue(TKey key, out TValue value)
-		{
-			throw new NotImplementedException();
-		}
-
-		// Summary:
-		//     Gets an System.Collections.Generic.ICollection<T> containing the values in
-		//     the System.Collections.Generic.IDictionary<TKey,TValue>.
-		//
-		// Returns:
-		//     An System.Collections.Generic.ICollection<T> containing the values in the
-		//     object that implements System.Collections.Generic.IDictionary<TKey,TValue>.
-		public ICollection<TValue> Values
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public bool Contains(KeyValuePair<TKey, TValue> item)
-		{
-			throw new NotImplementedException();
-		}
 
 		#region Helper Classes
 		private class Node
