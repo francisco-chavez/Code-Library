@@ -90,11 +90,15 @@ namespace Unvi.DataStructures.Dictionaries
 		{
 			_root = null;
 			Count = 0;
+
+			Keys = new KeyCollection(this);
 		}
 
 		~AVLTreeDictionary()
 		{
 			Clear();
+			Keys.ClearOut();
+			Keys = null;
 		}
 		#endregion
 
@@ -618,6 +622,11 @@ namespace Unvi.DataStructures.Dictionaries
 			{
 				_dictionary = dictionary;
 			}
+
+			~KeyCollection()
+			{
+				ClearOut();
+			}
 			#endregion
 
 
@@ -682,6 +691,18 @@ namespace Unvi.DataStructures.Dictionaries
 			{
 				return this.GetEnumerator();
 			}	// End GetEnumerator()
+			#endregion
+
+			#region Internal Methods
+			/// <summary>
+			/// If I could, I would turn this into a  friend method for the AVLTreeDictionary,
+			/// but C# doesn't do friends. Internal is the best I can do; this way, anyone
+			/// using the library won't be able to see this method.
+			/// </summary>
+			internal void ClearOut()
+			{
+				_dictionary = null;
+			}
 			#endregion
 		}
 
