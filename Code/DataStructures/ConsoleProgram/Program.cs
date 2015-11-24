@@ -1,6 +1,9 @@
 ﻿
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,8 +17,19 @@ namespace ConsoleProgram
 	{
 		static void Main(string[] args)
 		{
-			var set = new AVLTreeSet<int>();
-			int count = set.Count;
+			var dictionary = new Dictionary<int, int>();
+
+			for (int i = 0; i < 5; i++)
+				dictionary.Add(i, i);
+
+			//// Needed to see what would happen if I tried to make a change
+			//// to the key collection from the collection itself.
+			//ICollection<int> keys = dictionary.Keys;
+			//keys.Add(8);
+
+			var keys = dictionary.Keys;
+
+			dictionary.Add(10, 10);
 		}
 	}
 }

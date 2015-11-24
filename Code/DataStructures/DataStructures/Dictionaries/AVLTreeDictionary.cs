@@ -594,6 +594,119 @@ namespace Unvi.DataStructures.Dictionaries
 
 
 		#region Helper Classes
+		public class KeyCollection
+			: ICollection<TKey>
+		{
+			#region Attributes
+			#endregion
+
+
+			#region Properties
+			public int Count
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public bool IsReadOnly
+			{
+				get { throw new NotImplementedException(); }
+			}
+			#endregion
+
+
+			#region Constructors
+			#endregion
+
+
+			#region Methods
+			public void Add(TKey item)
+			{
+				throw new NotImplementedException();
+			}
+
+			public bool Remove(TKey item)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void Clear()
+			{
+				throw new NotImplementedException();
+			}
+
+
+			public bool Contains(TKey item)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void CopyTo(TKey[] array, int arrayIndex)
+			{
+				throw new NotImplementedException();
+			}
+
+			public IEnumerator<TKey> GetEnumerator()
+			{
+				throw new NotImplementedException();
+			}
+			#endregion
+
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public class ValueCollection
+			: ICollection<TValue>
+		{
+			public void Add(TValue item)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void Clear()
+			{
+				throw new NotImplementedException();
+			}
+
+			public bool Contains(TValue item)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void CopyTo(TValue[] array, int arrayIndex)
+			{
+				throw new NotImplementedException();
+			}
+
+			public int Count
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public bool IsReadOnly
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public bool Remove(TValue item)
+			{
+				throw new NotImplementedException();
+			}
+
+			public IEnumerator<TValue> GetEnumerator()
+			{
+				throw new NotImplementedException();
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				throw new NotImplementedException();
+			}
+		}
+
 		private class Node
 		{
 			#region Properties
