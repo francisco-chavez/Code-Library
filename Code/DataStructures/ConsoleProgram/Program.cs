@@ -22,14 +22,14 @@ namespace ConsoleProgram
 			for (int i = 0; i < 5; i++)
 				dictionary.Add(i, i);
 
-			//// Needed to see what would happen if I tried to make a change
-			//// to the key collection from the collection itself.
-			//ICollection<int> keys = dictionary.Keys;
-			//keys.Add(8);
+			// Needed to see what would happen if I tried to make a change
+			// to the key collection from the collection itself.
+			ICollection<int> keys = dictionary.Keys;
+			keys.Add(8);
 
-			var keys = dictionary.Keys;
+			//var keys = dictionary.Keys;
 
-			dictionary.Add(10, 10);
+			//dictionary.Add(10, 10);
 		}
 	}
 }

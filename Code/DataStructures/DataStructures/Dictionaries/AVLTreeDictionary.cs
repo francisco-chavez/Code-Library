@@ -62,17 +62,13 @@ namespace Unvi.DataStructures.Dictionaries
 			}	// End set
 		}	// End [] property.
 
-		// Summary:
-		//     Gets an System.Collections.Generic.ICollection<T> containing the keys of
-		//     the System.Collections.Generic.IDictionary<TKey,TValue>.
-		//
-		// Returns:
-		//     An System.Collections.Generic.ICollection<T> containing the keys of the object
-		//     that implements System.Collections.Generic.IDictionary<TKey,TValue>.
-		public ICollection<TKey> Keys
-		{
-			get { throw new NotImplementedException(); }
-		}	// End Keys Property
+		/// <summary>
+		/// Gets an ICollection&lt;TKey&gt; containing the keys of the
+		/// AVLTreeDictionary&lt;TKey, TValue&gt;.
+		/// </summary>
+		public KeyCollection Keys { get; private set; }
+
+		ICollection<TKey> IDictionary<TKey, TValue>.Keys { get { return this.Keys; } }
 
 		// Summary:
 		//     Gets an System.Collections.Generic.ICollection<T> containing the values in
@@ -334,12 +330,13 @@ namespace Unvi.DataStructures.Dictionaries
 		#endregion
 
 
-		#region Helper Methods
-
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return this.GetEnumerator();
 		}
+
+
+		#region Helper Methods
 
 		private void FillStack(Node[] stack, ref int index, Node current)
 		{
@@ -590,72 +587,102 @@ namespace Unvi.DataStructures.Dictionaries
 			node.Right	= null;
 			node.Parent = null;
 		}	// End -Clear(node: Node)
+		
 		#endregion
 
 
 		#region Helper Classes
-		public class KeyCollection
+		public sealed class KeyCollection
 			: ICollection<TKey>
 		{
 			#region Attributes
+			private AVLTreeDictionary<TKey, TValue> _dictionary;
 			#endregion
 
 
 			#region Properties
 			public int Count
 			{
-				get { throw new NotImplementedException(); }
+				get { return _dictionary.Count; }
 			}
 
 			public bool IsReadOnly
 			{
-				get { throw new NotImplementedException(); }
+				get { return true; }
 			}
 			#endregion
 
 
 			#region Constructors
+			internal KeyCollection(AVLTreeDictionary<TKey, TValue> dictionary)
+			{
+				_dictionary = dictionary;
+			}
 			#endregion
 
 
-			#region Methods
-			public void Add(TKey item)
-			{
-				throw new NotImplementedException();
-			}
+			#region Public Methods
 
-			public bool Remove(TKey item)
+			/// <summary>
+			/// Copies the keys contained in the collection into the given array.
+			/// </summary>
+			/// <param name="array">The array to copy the keys into.</param>
+			/// <param name="arrayIndex">
+			/// The index (of the given array) to start placing the keys into. This have a
+			/// default value of 0.
+			/// </param>
+			public void CopyTo(TKey[] array, int arrayIndex = 0)
 			{
-				throw new NotImplementedException();
-			}
+				if (array == null)
+					throw new ArgumentNullException("array");
+				if (arrayIndex < 0)
+					throw new IndexOutOfRangeException("arrayIndex is out of bounds.");
+				if (array.Length - arrayIndex < Count)
+					throw new ArgumentException("Not enough space in given array.");
 
-			public void Clear()
-			{
-				throw new NotImplementedException();
-			}
-
-
-			public bool Contains(TKey item)
-			{
-				throw new NotImplementedException();
-			}
-
-			public void CopyTo(TKey[] array, int arrayIndex)
-			{
-				throw new NotImplementedException();
-			}
+				using (var ittor = _dictionary.GetEnumerator())
+				{
+					for (int i = arrayIndex; ittor.MoveNext(); i++)
+						array[i] = ittor.Current.Key;
+				}
+			}	// End +CopyTo(array: TKey[], arrayIndex: int)
 
 			public IEnumerator<TKey> GetEnumerator()
 			{
-				throw new NotImplementedException();
-			}
+				foreach (var entry in _dictionary)
+					yield return entry.Key;
+			}	// End +GetEnumerator(): IEnuerator<TKey>
+
 			#endregion
 
 
+			#region Explicite Method Implementations
+			void ICollection<TKey>.Add(TKey item)
+			{
+				throw new NotSupportedException();
+			}	// End Add()
+
+			bool ICollection<TKey>.Remove(TKey item)
+			{
+				throw new NotSupportedException();
+			}	// End Remove()
+
+			void ICollection<TKey>.Clear()
+			{
+				throw new NotSupportedException();
+			}	// End Clear()
+
+
+			bool ICollection<TKey>.Contains(TKey item)
+			{
+				return _dictionary.ContainsKey(item);
+			}	// End Contains()
+
 			IEnumerator IEnumerable.GetEnumerator()
 			{
-				throw new NotImplementedException();
-			}
+				return this.GetEnumerator();
+			}	// End GetEnumerator()
+			#endregion
 		}
 
 		public class ValueCollection
