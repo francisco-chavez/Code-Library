@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 using Unvi.DataStructures.Sets;
 
@@ -70,17 +71,11 @@ namespace Unvi.DataStructures.Dictionaries
 
 		ICollection<TKey> IDictionary<TKey, TValue>.Keys { get { return this.Keys; } }
 
-		// Summary:
-		//     Gets an System.Collections.Generic.ICollection<T> containing the values in
-		//     the System.Collections.Generic.IDictionary<TKey,TValue>.
-		//
-		// Returns:
-		//     An System.Collections.Generic.ICollection<T> containing the values in the
-		//     object that implements System.Collections.Generic.IDictionary<TKey,TValue>.
-		public ICollection<TValue> Values
-		{
-			get { throw new NotImplementedException(); }
-		}	// End Values Property
+		/// <summary>
+		/// Gets a ValueCollection containing the values in the dictionary.
+		/// </summary>
+		public ValueCollection Values { get; private set; }
+		ICollection<TValue> IDictionary<TKey, TValue>.Values { get { return this.Values; } }
 
 		#endregion
 
@@ -88,17 +83,22 @@ namespace Unvi.DataStructures.Dictionaries
 		#region Constructors
 		public AVLTreeDictionary()
 		{
-			_root = null;
-			Count = 0;
+			_root	= null;
+			Count	= 0;
 
-			Keys = new KeyCollection(this);
+			Keys	= new KeyCollection(this);
+			Values	= new ValueCollection(this);
 		}
 
 		~AVLTreeDictionary()
 		{
 			Clear();
+
 			Keys.ClearOut();
-			Keys = null;
+			Values.ClearOut();
+			
+			Keys	= null;
+			Values	= null;
 		}
 		#endregion
 
@@ -709,50 +709,125 @@ namespace Unvi.DataStructures.Dictionaries
 		public class ValueCollection
 			: ICollection<TValue>
 		{
-			public void Add(TValue item)
-			{
-				throw new NotImplementedException();
-			}
+			#region Attributes
+			private AVLTreeDictionary<TKey, TValue> _dictionary;
+			#endregion
 
-			public void Clear()
-			{
-				throw new NotImplementedException();
-			}
 
-			public bool Contains(TValue item)
-			{
-				throw new NotImplementedException();
-			}
-
-			public void CopyTo(TValue[] array, int arrayIndex)
-			{
-				throw new NotImplementedException();
-			}
-
+			#region Properties
 			public int Count
 			{
-				get { throw new NotImplementedException(); }
+				get { return _dictionary.Count; }
 			}
 
 			public bool IsReadOnly
 			{
-				get { throw new NotImplementedException(); }
+				get { return true; }
+			}
+			#endregion
+
+
+			#region Constructors
+			internal ValueCollection(AVLTreeDictionary<TKey, TValue> dictionary)
+			{
+				_dictionary = dictionary;
 			}
 
-			public bool Remove(TValue item)
+			~ValueCollection()
 			{
-				throw new NotImplementedException();
+				ClearOut();
 			}
+			#endregion
+
+
+			#region Public Methods
+
+			/// <summary>
+			/// Copies the values contained in the collection into the given array.
+			/// </summary>
+			/// <param name="array">The array to copy the keys into.</param>
+			/// <param name="arrayIndex">
+			/// The index (of the given array) to start placing the keys into. This have a
+			/// default value of 0.
+			/// </param>
+			public void CopyTo(TValue[] array, int arrayIndex = 0)
+			{
+				if (array == null)
+					throw new ArgumentNullException("array");
+				if (arrayIndex < 0)
+					throw new IndexOutOfRangeException("arrayIndex is out of bounds.");
+				if (array.Length - arrayIndex < Count)
+					throw new ArgumentException("Not enough space in given array.");
+
+				using (var ittor = _dictionary.GetEnumerator())
+				{
+					for (int i = arrayIndex; ittor.MoveNext(); i++)
+						array[i] = ittor.Current.Value;
+				}
+			}	// End +CopyTo(array: TKey[], arrayIndex: int)
 
 			public IEnumerator<TValue> GetEnumerator()
 			{
-				throw new NotImplementedException();
-			}
+				foreach (var entry in _dictionary)
+					yield return entry.Value;
+			}	// End +GetEnumerator(): IEnuerator<TKey>
+
+			#endregion
+
+
+			#region Explicite Method Implementations
+
+			void ICollection<TValue>.Add(TValue item)
+			{
+				throw new NotSupportedException();
+			}	// End Add()
+
+			bool ICollection<TValue>.Remove(TValue item)
+			{
+				throw new NotSupportedException();
+			}	// End Remove()
+
+			void ICollection<TValue>.Clear()
+			{
+				throw new NotSupportedException();
+			}	// End Clear()
+
+			/// <summary>
+			/// This is a O(n) time operation where n == this.Count. If any of the values in the
+			/// dictionary are equal to the given item, this will return true.
+			/// </summary>
+			bool ICollection<TValue>.Contains(TValue item)
+			{
+				// This looks a bit long, but it's actually quite short. Normally, we could do
+				// an == or .Equals(), but that's not really an option in this case. We can't do
+				// an == because we're using generics. And, we can't wall .Equals() because a
+				// value could be null. We could do our own null value checks, but all those if
+				// statments would take up additional space. The EqualityComaprer does this for
+				// us while running the .Equals() (or something similar) when there's a value
+				// for both paramaters. It takes care of all those edge cases with a single 
+				// method call. After that we just use Linq to run this on every value. We could
+				// do this in our own loop, but Linq works just as well.
+				// -FCT
+				return this.Any(val => { return EqualityComparer<TValue>.Default.Equals(val, item); });
+			}	// End Contains()
 
 			IEnumerator IEnumerable.GetEnumerator()
 			{
-				throw new NotImplementedException();
+				return this.GetEnumerator();
+			}	// End GetEnumerator()
+			#endregion
+
+			#region Internal Methods
+			/// <summary>
+			/// If I could, I would turn this into a  friend method for the AVLTreeDictionary,
+			/// but C# doesn't do friends. Internal is the best I can do; this way, anyone
+			/// using the library won't be able to see this method.
+			/// </summary>
+			internal void ClearOut()
+			{
+				_dictionary = null;
 			}
+			#endregion
 		}
 
 		private class Node
