@@ -45,7 +45,6 @@ namespace Unvi.DataStructures
 			_priorityMap	= new Dictionary<int, Queue>();
 			Count			= 0;
 
-
 			throw new NotImplementedException();
 		}
 
@@ -56,7 +55,18 @@ namespace Unvi.DataStructures
 
 
 		#region Methods
-		public void Enqueue(T value, int priority = int.MinValue) { throw new NotImplementedException(); }
+		public void Enqueue(T value, int priority = int.MinValue)
+		{
+			if (!_priorityMap.ContainsKey(priority))
+			{
+				_priorityMap.Add(priority, new Queue());
+				_heap.Push(priority);
+			}
+
+			_priorityMap[priority].Enqueue(value);
+			Count++;
+		}
+
 		public void Push(T value, int priority = int.MinValue)
 		{
 			Enqueue(value, priority);
