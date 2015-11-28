@@ -13,13 +13,30 @@ namespace Unvi.DataStructures
 	public class PriorityQueue<T>
 	{
 		#region Attributes
-		private IHeap<int>				_heap;
-		private Dictionary<int, Queue> _priorityMap;
+		private IHeap<int>					_heap;
+		private Dictionary<int, Queue<T>>	_priorityMap;
 		#endregion
 
 
 		#region Properties
-		public T Dequeue { get { throw new NotImplementedException(); } }
+		public T Dequeue
+		{
+			get
+			{
+				if (Count == 0)
+					throw new InvalidOperationException("Items cannot be removed from an empty queue.");
+
+				int priority = _heap.Peek;
+				T value = _priorityMap[priority].Dequeue();
+
+				if (_priorityMap[priority].Count == 0)
+				{
+					_priorityMap.Remove(priority);
+					_heap.Pop();
+				}
+				throw new NotImplementedException();
+			}
+		}
 		public T Pop { get { return Dequeue; } }
 
 		public T Peek { get { throw new NotImplementedException(); } }
@@ -41,8 +58,8 @@ namespace Unvi.DataStructures
 
 		public PriorityQueue(IEnumerable<IEnumerable<T>> values, int startingPriority = int.MaxValue)
 		{
-			_heap			= new ListHeap<int>(HeapType.Min);
-			_priorityMap	= new Dictionary<int, Queue>();
+			_heap			= new ListHeap<int>(HeapType.Max);
+			_priorityMap	= new Dictionary<int, Queue<T>>();
 			Count			= 0;
 
 			throw new NotImplementedException();
@@ -59,7 +76,7 @@ namespace Unvi.DataStructures
 		{
 			if (!_priorityMap.ContainsKey(priority))
 			{
-				_priorityMap.Add(priority, new Queue());
+				_priorityMap.Add(priority, new Queue<T>());
 				_heap.Push(priority);
 			}
 
