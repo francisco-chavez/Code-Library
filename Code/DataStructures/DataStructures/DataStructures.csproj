@@ -60,7 +60,6 @@
   <ItemGroup>
     <Compile Include="Dictionaries\AVLTreeDictionary.cs" />
     <Compile Include="Heaps\HeapBase.cs" />
-    <Compile Include="Heaps\ListHeap.cs" />
     <Compile Include="Heaps\MaxHeap.cs" />
     <Compile Include="Heaps\MinHeap.cs" />
     <Compile Include="HeapType.cs" />

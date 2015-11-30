@@ -73,7 +73,7 @@ namespace Unvi.DataStructures
 
 		public PriorityQueue(IEnumerable<IEnumerable<T>> values, int startingPriority = int.MaxValue)
 		{
-			_heap			= new ListHeap<int>(HeapType.Max);
+			_heap			= new MaxHeap<int>();
 			_priorityMap	= new Dictionary<int, Queue<T>>();
 			Count			= 0;
 
