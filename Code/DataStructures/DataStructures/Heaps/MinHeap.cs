@@ -12,7 +12,7 @@ namespace Unvi.DataStructures.Heaps
 	{
 		public override HeapType HeapType
 		{
-			get { return DataStructures.HeapType.Min; }
+			get { return HeapType.Min; }
 		}
 
 		protected override bool HeapValidFor(int parent, int child)

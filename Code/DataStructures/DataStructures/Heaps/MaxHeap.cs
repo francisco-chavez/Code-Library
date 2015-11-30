@@ -12,17 +12,20 @@ namespace Unvi.DataStructures.Heaps
 	{
 		public override HeapType HeapType
 		{
-			get { throw new NotImplementedException(); }
+			get { return HeapType.Max; }
 		}
 
 		protected override bool HeapValidFor(int parent, int child)
 		{
-			throw new NotImplementedException();
+			if (child >= Count)
+				return true;
+
+			return _data[parent].CompareTo(_data[child]) >= 0;
 		}
 
 		protected override int GetBestParent(int parent, int left, int right)
 		{
-			throw new NotImplementedException();
+			return _data[left].CompareTo(_data[right]) >= 0 ? left : right;
 		}
 	}
 }
