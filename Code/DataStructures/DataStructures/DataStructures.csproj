@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Dictionaries\AVLTreeDictionary.cs" />
     <Compile Include="Heaps\ListHeap.cs" />
+    <Compile Include="Heaps\MinHeap.cs" />
     <Compile Include="HeapType.cs" />
     <Compile Include="IHeap.cs" />
     <Compile Include="PriorityQueue.cs" />
