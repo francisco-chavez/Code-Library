@@ -28,18 +28,33 @@ namespace Unvi.DataStructures
 
 				int priority = _heap.Peek;
 				T value = _priorityMap[priority].Dequeue();
+				Count--;
 
 				if (_priorityMap[priority].Count == 0)
 				{
 					_priorityMap.Remove(priority);
 					_heap.Pop();
 				}
-				throw new NotImplementedException();
+
+				return value;
 			}
 		}
+
 		public T Pop { get { return Dequeue; } }
 
-		public T Peek { get { throw new NotImplementedException(); } }
+
+		public T Peek
+		{
+			get
+			{
+				if (Count == 0)
+					throw new InvalidOperationException("The queue contains no items to peek at.");
+
+				int priority = _heap.Peek;
+				return _priorityMap[priority].Peek();
+			}
+		}
+
 
 		public int Count { get; private set; }
 		#endregion
