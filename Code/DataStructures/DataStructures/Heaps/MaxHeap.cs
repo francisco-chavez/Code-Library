@@ -15,6 +15,9 @@ namespace Unvi.DataStructures.Heaps
 			get { return HeapType.Max; }
 		}
 
+		public MaxHeap() : base() { }
+		public MaxHeap(IEnumerable<T> data) : base(data) { }
+
 		protected override bool HeapValidFor(int parent, int child)
 		{
 			if (child >= Count)

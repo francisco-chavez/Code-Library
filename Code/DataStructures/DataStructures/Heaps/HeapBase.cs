@@ -41,9 +41,18 @@ namespace Unvi.DataStructures.Heaps
 
 		#region Constructors
 
-		public HeapBase()
+		public HeapBase() : this(null) { }
+
+		public HeapBase(IEnumerable<T> data)
 		{
-			_data = new List<T>(10);
+			if (data == null)
+				_data = new List<T>(10);
+			else if (data.Any(datum => { return datum == null; }))
+				throw new NullReferenceException("Given data contains null values.");
+			else
+				_data = new List<T>(data);
+
+			Heapify();
 		}
 
 		~HeapBase()
@@ -141,6 +150,17 @@ namespace Unvi.DataStructures.Heaps
 		}
 
 		protected abstract int GetBestParent(int parent, int left, int right);
+
+		protected void Heapify()
+		{
+			if (Count == 0 || Count == 1)
+				return;
+
+			// Lets skip all(or most) of the leaf nodes. These guys already 
+			// meet the heap property by bing leafs.
+			for (int i = Count / 2; i >= 0; i--)
+				FixHeap(i);
+		}
 		#endregion
 	}
 }

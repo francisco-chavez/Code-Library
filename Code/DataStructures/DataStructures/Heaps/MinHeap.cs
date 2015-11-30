@@ -15,6 +15,9 @@ namespace Unvi.DataStructures.Heaps
 			get { return HeapType.Min; }
 		}
 
+		public MinHeap() : base() { }
+		public MinHeap(IEnumerable<T> data) : base(data) { }
+
 		protected override bool HeapValidFor(int parent, int child)
 		{
 			if (child >= Count)
