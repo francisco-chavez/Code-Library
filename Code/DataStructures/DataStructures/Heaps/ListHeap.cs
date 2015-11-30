@@ -72,6 +72,11 @@ namespace Unvi.DataStructures.Heaps
 			return result;
 		}
 
+		public void Clear()
+		{
+			_data.Clear();
+		}
+
 		public void Push(T value)
 		{
 			if(value == null)

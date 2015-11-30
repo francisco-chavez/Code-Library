@@ -16,6 +16,7 @@ namespace Unvi.DataStructures
 		bool		IsEmpty		{ get; }
 
 		void Push(T value);
+		void Clear();
 		T Pop();
 	}
 }

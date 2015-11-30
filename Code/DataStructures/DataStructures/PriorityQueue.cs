@@ -77,11 +77,35 @@ namespace Unvi.DataStructures
 			_priorityMap	= new Dictionary<int, Queue<T>>();
 			Count			= 0;
 
-			throw new NotImplementedException();
+			if (values == null)
+				return;
+
+			int priorityCount = values.Count();
+
+			if (priorityCount == 0)
+				return;
+
+			if ((startingPriority - int.MinValue) < priorityCount)
+				throw new ArgumentException("There are not enough priorities to cover number of collections given.");
+
+			foreach (var p in values)
+			{
+				if (p.Count() > 0)
+				{
+					_heap.Push(startingPriority);
+					_priorityMap.Add(startingPriority, new Queue<T>());
+
+					foreach (var v in p)
+						_priorityMap[startingPriority].Enqueue(v);
+				}
+
+				startingPriority--;
+			}
 		}
 
 		~PriorityQueue()
 		{
+			Clear();
 		}
 		#endregion
 
@@ -102,6 +126,13 @@ namespace Unvi.DataStructures
 		public void Push(T value, int priority = int.MinValue)
 		{
 			Enqueue(value, priority);
+		}
+
+		public void Clear()
+		{
+			_priorityMap.Clear();
+			_heap.Clear();
+			Count = 0;
 		}
 		#endregion
 	}
