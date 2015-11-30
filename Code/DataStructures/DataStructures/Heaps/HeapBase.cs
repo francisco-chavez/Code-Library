@@ -36,6 +36,16 @@ namespace Unvi.DataStructures.Heaps
 		{
 			get { return _data.Count == 0; }
 		}
+
+		/// <summary>
+		/// Gets or sets the total number of elements the data structure can hold without resizing.
+		/// </summary>
+		public int Capacity
+		{
+			get { return _data.Capacity; }
+			set { _data.Capacity = value; }
+		}
+
 		#endregion
 
 
@@ -108,6 +118,15 @@ namespace Unvi.DataStructures.Heaps
 			FixHeap(0);
 
 			return result;
+		}
+
+		/// <summary>
+		/// Sets the capacity to the actual number of elements in the IHeap&lt;T&gt;, if that number
+		/// is less than a threshold value.
+		/// </summary>
+		public void TrimExcess()
+		{
+			_data.TrimExcess();
 		}
 
 		#endregion

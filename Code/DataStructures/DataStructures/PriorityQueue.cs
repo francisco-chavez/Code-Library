@@ -61,15 +61,8 @@ namespace Unvi.DataStructures
 
 
 		#region Constructors
-		public PriorityQueue()
-			: this(new T[][] { })
-		{
-		}
-
-		public PriorityQueue(IEnumerable<T> values, int priority = int.MinValue)
-			: this(new IEnumerable<T>[] { values })
-		{
-		}
+		public PriorityQueue() : this(new T[][] { }) { }
+		public PriorityQueue(IEnumerable<T> values, int priority = int.MinValue) : this(new IEnumerable<T>[] { values }) { }
 
 		public PriorityQueue(IEnumerable<IEnumerable<T>> values, int startingPriority = int.MaxValue)
 		{
