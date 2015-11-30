@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Unvi.DataStructures.Heaps
 {
-	public class MinHeap<T>
-		: HeapBase<T> where T: IComparable<T>
+	public class MaxHeap<T>
+		: HeapBase<T> where T : IComparable<T>
 	{
 		public override HeapType HeapType
 		{
