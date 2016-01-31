@@ -55,10 +55,10 @@ namespace Unvi.DataStructures.Dictionaries
 					throw new KeyNotFoundException();
 
 				var parent = GetParent(key);
-				if (parent == null)
-					_root.Value = value;
+				Node n = _root;
 
-				Node n = key.CompareTo(parent.Key) < 0 ? parent.Left : parent.Right;
+				if (parent != null)
+					n = key.CompareTo(parent.Key) < 0 ? parent.Left : parent.Right;
 				n.Value = value;
 			}	// End set
 		}	// End [] property.
